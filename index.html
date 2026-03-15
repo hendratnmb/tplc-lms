@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Technical Plant Learning Center</title>
+<title>Technical Support Training</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -354,13 +354,20 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .fade-up{animation:fadeUp 0.4s ease forwards;}
 .fu1{animation-delay:0.04s;opacity:0;}.fu2{animation-delay:0.09s;opacity:0;}.fu3{animation-delay:0.14s;opacity:0;}.fu4{animation-delay:0.19s;opacity:0;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px;}
+
+@media print {
+  .sidebar, .topbar, .btn-logout, .icon-btn, .modal-overlay { display: none !important; }
+  .main { margin-left: 0 !important; }
+  body { background: white !important; color: black !important; }
+  .card { border: 1px solid #ccc !important; break-inside: avoid; }
+}
 </style>
 </head>
 <body>
 
 <!-- LOADING -->
 <div class="loading-screen" id="loadingScreen">
-  <div class="loading-logo">Technical Plant LMS</div>
+  <div class="loading-logo">Technical Support Training</div>
   <div class="loading-bar"><div class="loading-bar-fill"></div></div>
   <div class="loading-text">Menghubungkan ke database...</div>
 </div>
@@ -373,8 +380,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="auth-card">
     <div class="auth-logo">
       <div class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
-      <div class="auth-logo-title">Technical Plant</div>
-      <div class="auth-logo-sub">Learning Center</div>
+      <div class="auth-logo-title">Technical Support</div>
+      <div class="auth-logo-sub">Training Center</div>
     </div>
     <div class="auth-tabs">
       <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Masuk</div>
@@ -401,10 +408,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="rEmail" type="email" placeholder="email@perusahaan.com"><div class="err-msg" id="rEmailErr">Email sudah terdaftar atau tidak valid</div></div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Departemen</label>
-          <select class="form-select" id="rDept"><option value="">-- Pilih --</option><option>Process Engineering</option><option>Mechanical</option><option>Instrumentation</option><option>Electrical</option><option>HSE Department</option><option>Commissioning</option><option>Environmental</option></select>
+          <select class="form-select" id="rDept"><option value="">-- Pilih --</option><option>Electrical</option><option>Mechanical</option><option>Maintenance</option><option>Quality Control</option><option>PLANT</option></select>
         </div>
         <div class="form-group"><label class="form-label">Lokasi / Site</label>
-          <select class="form-select" id="rSite"><option value="">-- Pilih --</option><option>Kalimantan Timur</option><option>Kalimantan Selatan</option><option>Sumatera</option><option>Jawa</option><option>Papua</option></select>
+          <select class="form-select" id="rSite"><option value="">-- Pilih --</option><option>Kalimantan Timur</option><option>Kalimantan Selatan</option><option>Sumatera</option><option>Sulawesi</option></select>
         </div>
       </div>
       <div class="form-row">
@@ -421,8 +428,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="sidebar">
     <div class="logo-area">
       <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
-      <div class="logo-title">Technical Plant</div>
-      <div class="logo-sub">Learning Center</div>
+      <div class="logo-title">Technical Support</div>
+      <div class="logo-sub">Training Center</div>
     </div>
     <div class="nav-section">
       <div class="nav-label">Overview</div>
@@ -430,13 +437,18 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div class="nav-item" onclick="go('my-learning',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>My Learning<span class="nbadge green">3</span></div>
       <div class="nav-item" onclick="go('schedule',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Jadwal Training</div>
       <div class="nav-label">Materi</div>
-      <div class="nav-item" onclick="go('courses',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Kursus & Modul<span class="nbadge orange">24</span></div>
+      <div class="nav-item" onclick="go('courses',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Kursus & Modul<span class="nbadge orange">10</span></div>
+      <div class="nav-item" onclick="go('materials',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Materi & File</div>
       <div class="nav-item" onclick="go('quiz',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>Kuis & Ujian</div>
       <div class="nav-item" onclick="go('certificates',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>Sertifikat</div>
       <div class="nav-label">Analitik</div>
       <div class="nav-item" onclick="go('leaderboard',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Leaderboard</div>
       <div class="nav-item" onclick="go('report',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Laporan</div>
+      <div class="nav-item" onclick="go('progress',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Progress Saya</div>
+      <div class="nav-item" onclick="go('notifications',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>Notifikasi<span class="nbadge orange" id="notifBadge" style="display:none">0</span></div>
+      <div class="nav-item" onclick="go('attendance',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="23 11 17 17 14 14"/></svg>Absensi Training</div>
       <div class="nav-label admin-only">Admin Panel</div>
+      <div class="nav-item admin-only" onclick="go('admin-materials',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Kelola Materi<span class="nbadge green" id="matNavBadge">0</span></div>
       <div class="nav-item admin-only" onclick="go('admin-users',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Kelola Peserta<span class="nbadge purple" id="ub">0</span></div>
       <div class="nav-item" onclick="go('profile',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>Profil Saya</div>
     </div>
@@ -540,19 +552,105 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         </div>
       </div>
 
+      
       <!-- COURSES -->
       <div class="section" id="section-courses">
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:20px" class="fade-up fu1">
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div style="height:105px;background:linear-gradient(135deg,#0d2a3a,#0a4060);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">⚙️<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(245,200,66,0.2);color:var(--accent4);border:1px solid rgba(245,200,66,0.3);font-family:'JetBrains Mono',monospace">INTERMEDIATE</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">MECHANICAL</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Rotating Equipment Fundamentals</div><div style="font-size:10px;color:var(--text2)">⏱ 12 jam · 📖 8 modul · ⭐ 4.8</div></div></div>
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div style="height:105px;background:linear-gradient(135deg,#2a1a0d,#603010);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🔥<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(255,107,43,0.2);color:var(--accent2);border:1px solid rgba(255,107,43,0.3);font-family:'JetBrains Mono',monospace">ADVANCED</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">PROCESS SAFETY</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">HAZOP & Risk Assessment</div><div style="font-size:10px;color:var(--text2)">⏱ 18 jam · 📖 12 modul · ⭐ 4.9</div></div></div>
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div style="height:105px;background:linear-gradient(135deg,#0d2a15,#105028);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🌿<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(57,224,117,0.2);color:var(--accent3);border:1px solid rgba(57,224,117,0.3);font-family:'JetBrains Mono',monospace">BASIC</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">ENVIRONMENT</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">PROPER & Pengelolaan Limbah</div><div style="font-size:10px;color:var(--text2)">⏱ 8 jam · 📖 6 modul · ⭐ 4.6</div></div></div>
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div style="height:105px;background:linear-gradient(135deg,#2a2a0d,#504010);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">⚡<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(245,200,66,0.2);color:var(--accent4);border:1px solid rgba(245,200,66,0.3);font-family:'JetBrains Mono',monospace">INTERMEDIATE</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">ELECTRICAL</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">High Voltage Safety & Systems</div><div style="font-size:10px;color:var(--text2)">⏱ 14 jam · 📖 9 modul · ⭐ 4.7</div></div></div>
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div style="height:105px;background:linear-gradient(135deg,#1a0d2a,#300860);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🔬<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(255,107,43,0.2);color:var(--accent2);border:1px solid rgba(255,107,43,0.3);font-family:'JetBrains Mono',monospace">ADVANCED</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">INSTRUMENT</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Process Control & DCS Config</div><div style="font-size:10px;color:var(--text2)">⏱ 20 jam · 📖 14 modul · ⭐ 4.9</div></div></div>
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div style="height:105px;background:linear-gradient(135deg,#2a0d0d,#600010);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🏗️<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(57,224,117,0.2);color:var(--accent3);border:1px solid rgba(57,224,117,0.3);font-family:'JetBrains Mono',monospace">BASIC</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">COMMISSIONING</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Plant Commissioning Procedures</div><div style="font-size:10px;color:var(--text2)">⏱ 10 jam · 📖 7 modul · ⭐ 4.5</div></div></div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="height:105px;background:linear-gradient(135deg,#0d2a3a,#0a4060);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">⚡
+              <span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(57,224,117,0.2);color:var(--accent3);border:1px solid rgba(57,224,117,0.3);font-family:'JetBrains Mono',monospace">BASIC</span>
+            </div>
+            <div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">ELECTRICAL</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">Electrical Safety</div>
+            <div style="font-size:10px;color:var(--text2)">⏱ 8 jam · 📖 6 modul · ⭐ 4.8</div></div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="height:105px;background:linear-gradient(135deg,#2a1a0d,#603010);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🔧
+              <span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(245,200,66,0.2);color:var(--accent4);border:1px solid rgba(245,200,66,0.3);font-family:'JetBrains Mono',monospace">INTERMEDIATE</span>
+            </div>
+            <div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">MECHANICAL</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">Mechanical Maintenance</div>
+            <div style="font-size:10px;color:var(--text2)">⏱ 12 jam · 📖 9 modul · ⭐ 4.7</div></div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="height:105px;background:linear-gradient(135deg,#0d2a15,#105028);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🔬
+              <span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(57,224,117,0.2);color:var(--accent3);border:1px solid rgba(57,224,117,0.3);font-family:'JetBrains Mono',monospace">BASIC</span>
+            </div>
+            <div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">QUALITY CONTROL</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">Quality Control Basics</div>
+            <div style="font-size:10px;color:var(--text2)">⏱ 10 jam · 📖 7 modul · ⭐ 4.6</div></div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="height:105px;background:linear-gradient(135deg,#2a2a0d,#504010);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🏭
+              <span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(255,107,43,0.2);color:var(--accent2);border:1px solid rgba(255,107,43,0.3);font-family:'JetBrains Mono',monospace">ADVANCED</span>
+            </div>
+            <div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">PLANT</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">Plant Operations</div>
+            <div style="font-size:10px;color:var(--text2)">⏱ 16 jam · 📖 12 modul · ⭐ 4.9</div></div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="height:105px;background:linear-gradient(135deg,#1a0d2a,#300860);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🛠️
+              <span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(245,200,66,0.2);color:var(--accent4);border:1px solid rgba(245,200,66,0.3);font-family:'JetBrains Mono',monospace">INTERMEDIATE</span>
+            </div>
+            <div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">MAINTENANCE</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">Preventive Maintenance</div>
+            <div style="font-size:10px;color:var(--text2)">⏱ 14 jam · 📖 10 modul · ⭐ 4.8</div></div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="height:105px;background:linear-gradient(135deg,#2a0d0d,#600010);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">⚙️
+              <span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(255,107,43,0.2);color:var(--accent2);border:1px solid rgba(255,107,43,0.3);font-family:'JetBrains Mono',monospace">ADVANCED</span>
+            </div>
+            <div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">MECHANICAL</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">Rotating Equipment</div>
+            <div style="font-size:10px;color:var(--text2)">⏱ 18 jam · 📖 13 modul · ⭐ 4.9</div></div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="height:105px;background:linear-gradient(135deg,#0a2a1a,#0a5030);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">📋
+              <span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(57,224,117,0.2);color:var(--accent3);border:1px solid rgba(57,224,117,0.3);font-family:'JetBrains Mono',monospace">BASIC</span>
+            </div>
+            <div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">SAFETY</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">Work Permit System</div>
+            <div style="font-size:10px;color:var(--text2)">⏱ 6 jam · 📖 5 modul · ⭐ 4.7</div></div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="height:105px;background:linear-gradient(135deg,#2a1a00,#604000);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🏗️
+              <span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(245,200,66,0.2);color:var(--accent4);border:1px solid rgba(245,200,66,0.3);font-family:'JetBrains Mono',monospace">INTERMEDIATE</span>
+            </div>
+            <div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">MAINTENANCE</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">Rigging & Lifting</div>
+            <div style="font-size:10px;color:var(--text2)">⏱ 10 jam · 📖 8 modul · ⭐ 4.6</div></div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="height:105px;background:linear-gradient(135deg,#1a0a0a,#500000);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🔥
+              <span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(255,107,43,0.2);color:var(--accent2);border:1px solid rgba(255,107,43,0.3);font-family:'JetBrains Mono',monospace">ADVANCED</span>
+            </div>
+            <div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">MECHANICAL</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">Welding & Fabrication</div>
+            <div style="font-size:10px;color:var(--text2)">⏱ 20 jam · 📖 14 modul · ⭐ 4.8</div></div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="height:105px;background:linear-gradient(135deg,#0d1a2a,#1a3a5a);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">📡
+              <span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(245,200,66,0.2);color:var(--accent4);border:1px solid rgba(245,200,66,0.3);font-family:'JetBrains Mono',monospace">INTERMEDIATE</span>
+            </div>
+            <div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">ELECTRICAL</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">Instrument Calibration</div>
+            <div style="font-size:10px;color:var(--text2)">⏱ 12 jam · 📖 9 modul · ⭐ 4.7</div></div>
+          </div>
+
         </div>
       </div>
 
-      <!-- QUIZ -->
+      <!-- QUIZ --><!-- QUIZ -->
       <div class="section" id="section-quiz">
         <div class="two-col fade-up fu1">
           <div>
@@ -649,8 +747,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
             <div class="form-group"><label class="form-label">Email (tidak bisa diubah)</label><input class="form-input" id="eEmail" readonly style="opacity:0.55;cursor:not-allowed"></div>
             <div class="form-group"><label class="form-label">Nomor HP / WhatsApp</label><input class="form-input" id="ePhone" placeholder="08xx-xxxx-xxxx"></div>
             <div class="form-row">
-              <div class="form-group"><label class="form-label">Departemen</label><select class="form-select" id="eDept"><option>Process Engineering</option><option>Mechanical</option><option>Instrumentation</option><option>Electrical</option><option>HSE Department</option><option>Commissioning</option><option>Environmental</option></select></div>
-              <div class="form-group"><label class="form-label">Lokasi / Site</label><select class="form-select" id="eSite"><option>Kalimantan Timur</option><option>Kalimantan Selatan</option><option>Sumatera</option><option>Jawa</option><option>Papua</option></select></div>
+              <div class="form-group"><label class="form-label">Departemen</label><select class="form-select" id="eDept"><option>Electrical</option><option>Mechanical</option><option>Maintenance</option><option>Quality Control</option><option>PLANT</option></select></div>
+              <div class="form-group"><label class="form-label">Lokasi / Site</label><select class="form-select" id="eSite"><option>Kalimantan Timur</option><option>Kalimantan Selatan</option><option>Sumatera</option><option>Sulawesi</option></select></div>
             </div>
             <div class="form-group"><label class="form-label">Jabatan / Posisi</label><input class="form-input" id="ePos" placeholder="Plant Engineer"></div>
             <div class="fsec-title">Ubah Password</div>
@@ -680,9 +778,207 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         </div>
       </div>
 
+
+      <!-- MATERIALS — Peserta View -->
+      <div class="section" id="section-materials">
+        <div class="fade-up fu1">
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header">
+              <div class="card-title">Materi & File Training</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <select class="form-select" id="matFilter" onchange="renderMaterials(this.value)" style="width:200px;padding:6px 12px;font-size:12px">
+                  <option value="">Semua Kursus</option>
+                  <option>Electrical Safety</option>
+                  <option>Mechanical Maintenance</option>
+                  <option>Quality Control Basics</option>
+                  <option>Plant Operations</option>
+                  <option>Preventive Maintenance</option>
+                  <option>Rotating Equipment</option>
+                  <option>Work Permit System</option>
+                  <option>Rigging &amp; Lifting</option>
+                  <option>Welding &amp; Fabrication</option>
+                  <option>Instrument Calibration</option>
+                </select>
+                <div class="card-badge live">● Google Drive</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="font-size:14px">📄</span> PDF/Dokumen</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="font-size:14px">📊</span> PPT/Excel</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="font-size:14px">🎬</span> Video</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="font-size:14px">🖼️</span> Gambar/Diagram</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)"><span style="font-size:14px">📋</span> SOP/Prosedur</div>
+            </div>
+            <div id="matList"><div style="color:var(--text2);font-size:12.5px;padding:20px 0;text-align:center">Memuat materi...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN MATERIALS -->
+      <div class="section" id="section-admin-materials">
+        <div class="card fade-up fu1">
+          <div class="card-header">
+            <div class="card-title">Kelola Materi <span style="font-size:10px;color:var(--accent3);font-family:'JetBrains Mono',monospace">● Admin Only</span></div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="card-badge" id="matCountBadge">0 File</div>
+              <button class="btn btn-primary" style="font-size:11px;padding:5px 13px" onclick="openAddMatModal()">+ Tambah Materi</button>
+            </div>
+          </div>
+          <div style="background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.1);border-radius:9px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--text2)">
+            💡 <strong style="color:var(--text)">Cara pakai:</strong> Upload file ke Google Drive → klik kanan → Bagikan → Salin link → Paste di sini. Untuk video, pakai link YouTube.
+          </div>
+          <div id="adminMatList"></div>
+        </div>
+      </div>
+      <!-- PROGRESS TRACKING -->
+      <div class="section" id="section-progress">
+        <div class="two-col fade-up fu1">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Progress Kursus Saya</div>
+              <div class="card-badge live">● Real-time</div>
+            </div>
+            <div id="progressList"><div style="color:var(--text2);font-size:12.5px;padding:20px 0;text-align:center">Memuat...</div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Poin Self Learning</div></div>
+            <div style="text-align:center;padding:10px 0">
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:54px;color:var(--accent4);letter-spacing:2px">847</div>
+              <div style="font-size:10.5px;color:var(--text2);margin-bottom:14px">TOTAL XP DIPEROLEH</div>
+            </div>
+            <div class="card-header" style="margin-top:8px"><div class="card-title">Cara Dapat Poin</div></div>
+            <div class="activity-item" style="padding:7px 0"><div class="act-dot" style="background:var(--accent)"></div><div style="flex:1;font-size:11.5px">Selesaikan modul</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent4)">+50 XP</div></div>
+            <div class="activity-item" style="padding:7px 0"><div class="act-dot" style="background:var(--accent3)"></div><div style="flex:1;font-size:11.5px">Lulus ujian ≥90</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent4)">+100 XP</div></div>
+            <div class="activity-item" style="padding:7px 0"><div class="act-dot" style="background:var(--accent2)"></div><div style="flex:1;font-size:11.5px">Dapat sertifikat</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent4)">+200 XP</div></div>
+            <div class="activity-item" style="padding:7px 0"><div class="act-dot" style="background:var(--accent4)"></div><div style="flex:1;font-size:11.5px">Hadir training</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent4)">+75 XP</div></div>
+            <div class="activity-item" style="padding:7px 0"><div class="act-dot" style="background:#aa88ff"></div><div style="flex:1;font-size:11.5px">Self study harian</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent4)">+25 XP</div></div>
+            <div class="activity-item" style="padding:7px 0"><div class="act-dot" style="background:var(--accent3)"></div><div style="flex:1;font-size:11.5px">Login harian</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent4)">+10 XP</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="section" id="section-notifications">
+        <div class="two-col fade-up fu1">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Deadline Training</div><div class="card-badge live">● Auto Update</div></div>
+            <div id="notifList"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Keterangan</div></div>
+            <div class="activity-item" style="padding:8px 0"><div class="act-dot" style="background:var(--accent2)"></div><div style="font-size:12.5px">Kurang dari 7 hari — <strong style="color:var(--accent2)">Segera!</strong></div></div>
+            <div class="activity-item" style="padding:8px 0"><div class="act-dot" style="background:var(--accent4)"></div><div style="font-size:12.5px">7–14 hari — <strong style="color:var(--accent4)">Perhatian</strong></div></div>
+            <div class="activity-item" style="padding:8px 0"><div class="act-dot" style="background:var(--accent3)"></div><div style="font-size:12.5px">Lebih dari 14 hari — <strong style="color:var(--accent3)">Aman</strong></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATTENDANCE -->
+      <div class="section" id="section-attendance">
+        <div class="two-col fade-up fu1">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Catat Kehadiran</div></div>
+            <div class="form-group"><label class="form-label">Nama Training</label>
+              <select class="form-select" id="attTraining">
+                <option value="">-- Pilih Training --</option>
+                <option>Electrical Safety</option>
+                <option>Mechanical Maintenance</option>
+                <option>Quality Control Basics</option>
+                <option>Plant Operations</option>
+                <option>Preventive Maintenance</option>
+                <option>Rotating Equipment</option>
+                <option>Work Permit System</option>
+                <option>Rigging & Lifting</option>
+                <option>Welding & Fabrication</option>
+                <option>Instrument Calibration</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Status Kehadiran</label>
+              <select class="form-select" id="attStatus">
+                <option value="">-- Pilih Status --</option>
+                <option value="hadir">Hadir</option>
+                <option value="izin">Izin</option>
+                <option value="alpha">Alpha</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="submitAttendance()" style="width:100%;margin-top:6px">Catat Kehadiran + 75 XP</button>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Riwayat Absensi</div><div class="card-badge">10 Terakhir</div></div>
+            <div id="attendanceList"></div>
+          </div>
+        </div>
+      </div>
     </div><!-- /content -->
   </div><!-- /main -->
 </div><!-- /app-wrap -->
+
+
+<!-- MODAL TAMBAH/EDIT MATERI -->
+<div class="modal-overlay" id="matModal">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-title" id="matModalTitle">Tambah Materi Baru</div>
+    <div class="form-group">
+      <label class="form-label">Judul Materi *</label>
+      <input class="form-input" id="matTitle" placeholder="contoh: Modul 1 — Electrical Safety">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Kursus *</label>
+        <select class="form-select" id="matCourse">
+          <option value="">-- Pilih Kursus --</option>
+          <option>Electrical Safety</option>
+          <option>Mechanical Maintenance</option>
+          <option>Quality Control Basics</option>
+          <option>Plant Operations</option>
+          <option>Preventive Maintenance</option>
+          <option>Rotating Equipment</option>
+          <option>Work Permit System</option>
+          <option>Rigging &amp; Lifting</option>
+          <option>Welding &amp; Fabrication</option>
+          <option>Instrument Calibration</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipe File *</label>
+        <select class="form-select" id="matType">
+          <option value="">-- Pilih Tipe --</option>
+          <option value="pdf">📄 PDF / Dokumen</option>
+          <option value="ppt">📊 PPT / Presentasi</option>
+          <option value="excel">📊 Excel / Spreadsheet</option>
+          <option value="video">🎬 Video (YouTube)</option>
+          <option value="img">🖼️ Gambar / Diagram</option>
+          <option value="sop">📋 SOP / Prosedur</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Link File * (Google Drive / YouTube)</label>
+      <input class="form-input" id="matUrl" placeholder="https://drive.google.com/file/d/... atau https://youtube.com/...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Departemen</label>
+        <select class="form-select" id="matDept">
+          <option value="Semua">Semua</option>
+          <option>Electrical</option>
+          <option>Mechanical</option>
+          <option>Maintenance</option>
+          <option>Quality Control</option>
+          <option>PLANT</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ukuran File</label>
+        <input class="form-input" id="matSize" placeholder="contoh: 2.4 MB">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeModal('matModal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveNewMaterial()">Simpan Materi</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL ADD USER -->
 <div class="modal-overlay" id="addModal">
@@ -693,7 +989,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div class="form-group"><label class="form-label">Nama Belakang</label><input class="form-input" id="mL"></div>
     </div>
     <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="mE" type="email"><div class="err-msg" id="mEErr">Email sudah terdaftar</div></div>
-    <div class="form-group"><label class="form-label">Departemen</label><select class="form-select" id="mD"><option>Process Engineering</option><option>Mechanical</option><option>Instrumentation</option><option>Electrical</option><option>HSE Department</option><option>Commissioning</option><option>Environmental</option></select></div>
+    <div class="form-group"><label class="form-label">Departemen</label><select class="form-select" id="mD"><option>Electrical</option><option>Mechanical</option><option>Maintenance</option><option>Quality Control</option><option>PLANT</option></select></div>
     <div class="form-group"><label class="form-label">Role</label><select class="form-select" id="mR"><option value="peserta">Peserta</option><option value="admin">Admin</option></select></div>
     <div class="form-group"><label class="form-label">Password Awal</label><input class="form-input" id="mP" type="password" placeholder="Min. 6 karakter"></div>
     <div class="modal-btns">
@@ -724,7 +1020,7 @@ const SUPABASE_KEY = 'sb_publishable_UagLOMyX-xfA7ltjkxBzfw_zcfpH9kK';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const COLORS = ['#00d4ff','#ff6b2b','#39e075','#f5c842','#aa88ff','#ff88bb','#88ffcc','#ffaa44'];
-const SS = 'tplc_session';
+const SS = 'tst_session';
 let CU = null, delTarget = null;
 
 // Session helpers (still use localStorage for session token only)
@@ -1124,7 +1420,7 @@ function go(id, el) {
     'certificates':'<span>Sertifikat</span>',
     'leaderboard':'<span>Leaderboard</span>',
     'report':'Laporan <span>Pembelajaran</span>',
-    'admin-users':'Kelola <span>Peserta</span>',
+    'admin-users':'Kelola <span>Peserta</span>','progress':'Progress <span>Saya</span>','notifications':'Notifikasi <span>Deadline</span>','attendance':'Absensi <span>Training</span>','materials':'Materi <span>& File</span>','admin-materials':'Kelola <span>Materi</span>',
     'profile':'Profil <span>Saya</span>'
   };
   document.getElementById('ttl').innerHTML = t[id] || id;
@@ -1158,6 +1454,221 @@ function toast(msg, type='info') {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
+
+// ============================================================
+// SISTEM MANAJEMEN MATERI
+// Admin: tambah/edit/hapus | Peserta: lihat/download
+// Tersimpan di localStorage (bisa dipindah ke Supabase)
+// ============================================================
+
+const MAT_KEY = 'tst_materials';
+
+const DUMMY_MATERIALS = [
+  // ELECTRICAL SAFETY
+  { id:'m1', course:'Electrical Safety', title:'Modul 1 — Pengenalan Keselamatan Listrik', type:'pdf', icon:'📄', url:'https://drive.google.com/file/d/GANTI_LINK_PDF_1/view', size:'2.4 MB', uploadedBy:'Admin Plant', date:'10 Mar 2025', dept:'Electrical' },
+  { id:'m2', course:'Electrical Safety', title:'Presentasi LOTO Procedure', type:'ppt', icon:'📊', url:'https://drive.google.com/file/d/GANTI_LINK_PPT_1/view', size:'5.1 MB', uploadedBy:'Admin Plant', date:'10 Mar 2025', dept:'Electrical' },
+  { id:'m3', course:'Electrical Safety', title:'Video Tutorial — Penggunaan AVO Meter', type:'video', icon:'🎬', url:'https://www.youtube.com/watch?v=GANTI_VIDEO_ID_1', size:'—', uploadedBy:'Admin Plant', date:'12 Mar 2025', dept:'Electrical' },
+  { id:'m4', course:'Electrical Safety', title:'SOP Kerja di Area Bertegangan', type:'sop', icon:'📋', url:'https://drive.google.com/file/d/GANTI_LINK_SOP_1/view', size:'1.2 MB', uploadedBy:'Admin Plant', date:'12 Mar 2025', dept:'Electrical' },
+
+  // MECHANICAL MAINTENANCE
+  { id:'m5', course:'Mechanical Maintenance', title:'Modul 1 — Dasar Perawatan Mekanik', type:'pdf', icon:'📄', url:'https://drive.google.com/file/d/GANTI_LINK_PDF_2/view', size:'3.8 MB', uploadedBy:'Admin Plant', date:'08 Mar 2025', dept:'Mechanical' },
+  { id:'m6', course:'Mechanical Maintenance', title:'Diagram Komponen Pompa Sentrifugal', type:'img', icon:'🖼️', url:'https://drive.google.com/file/d/GANTI_LINK_IMG_1/view', size:'800 KB', uploadedBy:'Admin Plant', date:'08 Mar 2025', dept:'Mechanical' },
+  { id:'m7', course:'Mechanical Maintenance', title:'Video — Cara Alignment Shaft', type:'video', icon:'🎬', url:'https://www.youtube.com/watch?v=GANTI_VIDEO_ID_2', size:'—', uploadedBy:'Admin Plant', date:'09 Mar 2025', dept:'Mechanical' },
+  { id:'m8', course:'Mechanical Maintenance', title:'Checklist Preventive Maintenance', type:'excel', icon:'📊', url:'https://drive.google.com/file/d/GANTI_LINK_EXCEL_1/view', size:'450 KB', uploadedBy:'Admin Plant', date:'09 Mar 2025', dept:'Mechanical' },
+
+  // PLANT OPERATIONS
+  { id:'m9', course:'Plant Operations', title:'Modul Commissioning & Start-Up', type:'pdf', icon:'📄', url:'https://drive.google.com/file/d/GANTI_LINK_PDF_3/view', size:'6.2 MB', uploadedBy:'Admin Plant', date:'05 Mar 2025', dept:'PLANT' },
+  { id:'m10', course:'Plant Operations', title:'P&ID Drawing Plant Area A', type:'img', icon:'🖼️', url:'https://drive.google.com/file/d/GANTI_LINK_IMG_2/view', size:'4.5 MB', uploadedBy:'Admin Plant', date:'05 Mar 2025', dept:'PLANT' },
+  { id:'m11', course:'Plant Operations', title:'Video Walkthrough — Plant Tour', type:'video', icon:'🎬', url:'https://www.youtube.com/watch?v=GANTI_VIDEO_ID_3', size:'—', uploadedBy:'Admin Plant', date:'06 Mar 2025', dept:'PLANT' },
+  { id:'m12', course:'Plant Operations', title:'SOP Emergency Shutdown Procedure', type:'sop', icon:'📋', url:'https://drive.google.com/file/d/GANTI_LINK_SOP_2/view', size:'1.8 MB', uploadedBy:'Admin Plant', date:'06 Mar 2025', dept:'PLANT' },
+
+  // WORK PERMIT
+  { id:'m13', course:'Work Permit System', title:'Modul Work Permit to Work', type:'pdf', icon:'📄', url:'https://drive.google.com/file/d/GANTI_LINK_PDF_4/view', size:'2.1 MB', uploadedBy:'Admin Plant', date:'01 Mar 2025', dept:'Semua' },
+  { id:'m14', course:'Work Permit System', title:'Form Izin Kerja Panas (Hot Work)', type:'pdf', icon:'📄', url:'https://drive.google.com/file/d/GANTI_LINK_PDF_5/view', size:'500 KB', uploadedBy:'Admin Plant', date:'01 Mar 2025', dept:'Semua' },
+  { id:'m15', course:'Work Permit System', title:'Video — Pengisian Form Permit', type:'video', icon:'🎬', url:'https://www.youtube.com/watch?v=GANTI_VIDEO_ID_4', size:'—', uploadedBy:'Admin Plant', date:'02 Mar 2025', dept:'Semua' },
+
+  // QUALITY CONTROL
+  { id:'m16', course:'Quality Control Basics', title:'Modul QC — Inspection Procedure', type:'pdf', icon:'📄', url:'https://drive.google.com/file/d/GANTI_LINK_PDF_6/view', size:'3.2 MB', uploadedBy:'Admin Plant', date:'07 Mar 2025', dept:'Quality Control' },
+  { id:'m17', course:'Quality Control Basics', title:'Template Laporan Inspeksi', type:'excel', icon:'📊', url:'https://drive.google.com/file/d/GANTI_LINK_EXCEL_2/view', size:'620 KB', uploadedBy:'Admin Plant', date:'07 Mar 2025', dept:'Quality Control' },
+
+  // PREVENTIVE MAINTENANCE
+  { id:'m18', course:'Preventive Maintenance', title:'Jadwal PM Bulanan — Template', type:'excel', icon:'📊', url:'https://drive.google.com/file/d/GANTI_LINK_EXCEL_3/view', size:'380 KB', uploadedBy:'Admin Plant', date:'03 Mar 2025', dept:'Maintenance' },
+  { id:'m19', course:'Preventive Maintenance', title:'Modul Dasar Preventive Maintenance', type:'pdf', icon:'📄', url:'https://drive.google.com/file/d/GANTI_LINK_PDF_7/view', size:'4.1 MB', uploadedBy:'Admin Plant', date:'03 Mar 2025', dept:'Maintenance' },
+];
+
+// Init materials in localStorage if empty
+function initMaterials() {
+  if (!localStorage.getItem(MAT_KEY)) {
+    localStorage.setItem(MAT_KEY, JSON.stringify(DUMMY_MATERIALS));
+  }
+}
+
+function getMaterials() {
+  try { return JSON.parse(localStorage.getItem(MAT_KEY)) || []; } catch { return []; }
+}
+
+function saveMaterials(mats) {
+  localStorage.setItem(MAT_KEY, JSON.stringify(mats));
+}
+
+// TYPE COLORS & LABELS
+const TYPE_STYLE = {
+  pdf:   { color:'var(--accent2)', bg:'rgba(255,107,43,0.1)', border:'rgba(255,107,43,0.2)', label:'PDF' },
+  ppt:   { color:'var(--accent)',  bg:'rgba(0,212,255,0.1)',  border:'rgba(0,212,255,0.2)',  label:'PPT' },
+  video: { color:'#ff4466',        bg:'rgba(255,68,102,0.1)', border:'rgba(255,68,102,0.2)', label:'VIDEO' },
+  excel: { color:'var(--accent3)', bg:'rgba(57,224,117,0.1)', border:'rgba(57,224,117,0.2)', label:'EXCEL' },
+  img:   { color:'var(--accent4)', bg:'rgba(245,200,66,0.1)', border:'rgba(245,200,66,0.2)', label:'GAMBAR' },
+  sop:   { color:'var(--admin)',   bg:'rgba(170,136,255,0.1)','border':'rgba(170,136,255,0.2)', label:'SOP' },
+};
+
+// ---- RENDER MATERIALS (Peserta view) ----
+function renderMaterials(filterCourse = '') {
+  const el = document.getElementById('matList');
+  if (!el) return;
+  let mats = getMaterials();
+  if (filterCourse) mats = mats.filter(m => m.course === filterCourse);
+
+  if (mats.length === 0) {
+    el.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:30px 0;text-align:center">Belum ada materi tersedia</div>';
+    return;
+  }
+
+  // Group by course
+  const grouped = {};
+  mats.forEach(m => {
+    if (!grouped[m.course]) grouped[m.course] = [];
+    grouped[m.course].push(m);
+  });
+
+  el.innerHTML = Object.entries(grouped).map(([course, items]) => `
+    <div style="margin-bottom:22px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--accent);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)">${course}</div>
+      ${items.map(m => {
+        const ts = TYPE_STYLE[m.type] || TYPE_STYLE.pdf;
+        const isVideo = m.type === 'video';
+        return `<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="width:38px;height:38px;border-radius:8px;background:${ts.bg};border:1px solid ${ts.border};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${m.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.title}</div>
+            <div style="font-size:10px;color:var(--text2);margin-top:2px;font-family:'JetBrains Mono',monospace">${m.dept} · ${m.size} · ${m.date}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+            <span style="font-size:9px;padding:2px 7px;border-radius:4px;background:${ts.bg};color:${ts.color};border:1px solid ${ts.border};font-family:'JetBrains Mono',monospace">${ts.label}</span>
+            <a href="${m.url}" target="_blank" style="padding:5px 12px;background:var(--accent);color:#0a0e14;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='#22e8ff'" onmouseout="this.style.background='var(--accent)'">${isVideo ? '▶ Tonton' : '⬇ Buka'}</a>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+}
+
+// ---- RENDER ADMIN MATERIALS ----
+function renderAdminMaterials() {
+  const el = document.getElementById('adminMatList');
+  if (!el) return;
+  const mats = getMaterials();
+  const badge = document.getElementById('matCountBadge');
+  if (badge) badge.textContent = mats.length + ' File';
+
+  if (mats.length === 0) {
+    el.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:20px 0;text-align:center">Belum ada materi. Klik "+ Tambah Materi"</div>';
+    return;
+  }
+
+  el.innerHTML = mats.map(m => {
+    const ts = TYPE_STYLE[m.type] || TYPE_STYLE.pdf;
+    return `<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+      <div style="font-size:20px;flex-shrink:0">${m.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12.5px;font-weight:500">${m.title}</div>
+        <div style="font-size:10px;color:var(--text2);font-family:'JetBrains Mono',monospace">${m.course} · ${m.dept} · ${m.size}</div>
+      </div>
+      <span style="font-size:9px;padding:2px 7px;border-radius:4px;background:${ts.bg};color:${ts.color};border:1px solid ${ts.border};font-family:'JetBrains Mono',monospace;flex-shrink:0">${ts.label}</span>
+      <div style="display:flex;gap:5px;flex-shrink:0">
+        <button onclick="editMaterial('${m.id}')" style="font-size:10px;padding:3px 9px;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);transition:all 0.18s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">Edit</button>
+        <button onclick="deleteMaterial('${m.id}')" style="font-size:10px;padding:3px 9px;border-radius:5px;cursor:pointer;border:1px solid rgba(255,107,43,0.2);background:transparent;color:var(--accent2);transition:all 0.18s" onmouseover="this.style.background='rgba(255,107,43,0.08)'" onmouseout="this.style.background='transparent'">Hapus</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ---- ADD MATERIAL ----
+function openAddMatModal() {
+  ['matTitle','matUrl','matSize'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('matModal').classList.add('open');
+  document.getElementById('matModalTitle').textContent = 'Tambah Materi Baru';
+  window._editMatId = null;
+}
+
+function saveNewMaterial() {
+  const title   = document.getElementById('matTitle')?.value.trim();
+  const course  = document.getElementById('matCourse')?.value;
+  const type    = document.getElementById('matType')?.value;
+  const url     = document.getElementById('matUrl')?.value.trim();
+  const dept    = document.getElementById('matDept')?.value;
+  const size    = document.getElementById('matSize')?.value.trim() || '—';
+
+  if (!title || !course || !type || !url) { toast('Harap isi semua field wajib', 'error'); return; }
+
+  const icons = { pdf:'📄', ppt:'📊', video:'🎬', excel:'📊', img:'🖼️', sop:'📋' };
+  const mats = getMaterials();
+
+  if (window._editMatId) {
+    const idx = mats.findIndex(m => m.id === window._editMatId);
+    if (idx > -1) {
+      mats[idx] = { ...mats[idx], title, course, type, url, dept, size, icon: icons[type] || '📄' };
+      toast('Materi berhasil diupdate ✓', 'success');
+    }
+  } else {
+    const newMat = {
+      id: 'm' + Date.now(), title, course, type, url, dept, size,
+      icon: icons[type] || '📄',
+      uploadedBy: CU ? (CU.first_name + ' ' + CU.last_name) : 'Admin',
+      date: new Date().toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'})
+    };
+    mats.push(newMat);
+    toast('Materi berhasil ditambahkan ✓', 'success');
+  }
+
+  saveMaterials(mats);
+  closeModal('matModal');
+  renderAdminMaterials();
+  window._editMatId = null;
+}
+
+function editMaterial(id) {
+  const mats = getMaterials();
+  const m = mats.find(x => x.id === id);
+  if (!m) return;
+  window._editMatId = id;
+  document.getElementById('matTitle').value = m.title;
+  document.getElementById('matUrl').value   = m.url;
+  document.getElementById('matSize').value  = m.size === '—' ? '' : m.size;
+  // Set selects
+  ['matCourse','matType','matDept'].forEach(sid => {
+    const sel = document.getElementById(sid);
+    const key = sid === 'matCourse' ? 'course' : sid === 'matType' ? 'type' : 'dept';
+    if (sel) for (let o of sel.options) if (o.value === m[key]) o.selected = true;
+  });
+  document.getElementById('matModalTitle').textContent = 'Edit Materi';
+  document.getElementById('matModal').classList.add('open');
+}
+
+function deleteMaterial(id) {
+  if (!confirm('Hapus materi ini?')) return;
+  const mats = getMaterials().filter(m => m.id !== id);
+  saveMaterials(mats);
+  renderAdminMaterials();
+  toast('Materi dihapus', 'info');
+}
+
+// Init on load
+initMaterials();
+// Update material nav badge
+setTimeout(() => {
+  const nb = document.getElementById('matNavBadge');
+  if (nb) nb.textContent = getMaterials().length;
+}, 500);
+
 
 // ============================================================
 // INIT — Check session & auto-login
@@ -1208,6 +1719,154 @@ window.addEventListener('load', () => {
     }
   }, 2000);
 });
+
+
+// ============================================================
+// FITUR BARU: ABSENSI, NOTIFIKASI, PROGRESS, SELF LEARNING XP
+// ============================================================
+
+// --- Self Learning XP Points System ---
+const XP_RULES = {
+  complete_module: 50,
+  pass_exam_90: 100,
+  get_certificate: 200,
+  daily_login: 10,
+  self_study: 25,
+  attend_training: 75
+};
+
+async function addXP(userId, points, reason) {
+  const user = await dbGetUserByEmail(CU?.email);
+  if (!user) return;
+  const newXP = (user.xp || 0) + points;
+  await dbUpdateUser(userId, { xp: newXP });
+  toast(`+${points} XP — ${reason}! 🎯`, 'success');
+}
+
+// --- Attendance / Absensi ---
+let attendanceData = JSON.parse(localStorage.getItem('tst_attendance') || '[]');
+
+function renderAttendance() {
+  const el = document.getElementById('attendanceList');
+  if (!el) return;
+  if (attendanceData.length === 0) {
+    el.innerHTML = '<div style="color:var(--text2);font-size:12.5px;padding:20px 0;text-align:center">Belum ada data absensi</div>';
+    return;
+  }
+  el.innerHTML = attendanceData.slice(-10).reverse().map(a => `
+    <div class="activity-item">
+      <div class="act-dot" style="background:${a.status==='hadir'?'var(--accent3)':a.status==='izin'?'var(--accent4)':'var(--accent2)'}"></div>
+      <div style="flex:1">
+        <div class="act-text"><span class="act-name">${a.training}</span></div>
+        <div class="act-time">${a.date} · ${a.dept}</div>
+      </div>
+      <span class="spill ${a.status==='hadir'?'done':a.status==='izin'?'pend':'prog'}" style="font-size:9.5px">${a.status}</span>
+    </div>`).join('');
+}
+
+function submitAttendance() {
+  const training = document.getElementById('attTraining')?.value;
+  const status = document.getElementById('attStatus')?.value;
+  if (!training || !status) { toast('Isi semua field absensi', 'error'); return; }
+  const record = {
+    id: Date.now(),
+    training,
+    status,
+    dept: CU?.dept || '—',
+    user: CU ? (CU.first_name + ' ' + CU.last_name) : '—',
+    date: new Date().toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric'})
+  };
+  attendanceData.push(record);
+  localStorage.setItem('tst_attendance', JSON.stringify(attendanceData));
+  renderAttendance();
+  if (status === 'hadir') addXP(CU.id, XP_RULES.attend_training, 'Hadir Training');
+  toast('Absensi berhasil dicatat ✓', 'success');
+  document.getElementById('attTraining').value = '';
+}
+
+// --- Notification / Deadline Reminder ---
+const TRAINING_DEADLINES = [
+  { name: 'K3 Annual Refresher', deadline: '2025-03-31', dept: 'Semua', urgent: false },
+  { name: 'Permit to Work Compliance', deadline: '2025-03-25', dept: 'PLANT', urgent: true },
+  { name: 'Emergency Response Drill', deadline: '2025-03-28', dept: 'Semua', urgent: true },
+  { name: 'Electrical Safety Certification', deadline: '2025-04-15', dept: 'Electrical', urgent: false },
+  { name: 'Preventive Maintenance Assessment', deadline: '2025-04-20', dept: 'Maintenance', urgent: false },
+];
+
+function renderNotifications() {
+  const el = document.getElementById('notifList');
+  if (!el) return;
+  const today = new Date();
+  const notifs = TRAINING_DEADLINES.map(t => {
+    const dl = new Date(t.deadline);
+    const diff = Math.ceil((dl - today) / (1000*60*60*24));
+    return { ...t, daysLeft: diff };
+  }).sort((a,b) => a.daysLeft - b.daysLeft);
+
+  el.innerHTML = notifs.map(n => `
+    <div class="activity-item">
+      <div class="act-dot" style="background:${n.daysLeft<=7?'var(--accent2)':n.daysLeft<=14?'var(--accent4)':'var(--accent3)'}"></div>
+      <div style="flex:1">
+        <div class="act-text"><span class="act-name">${n.name}</span></div>
+        <div class="act-time">Deadline: ${new Date(n.deadline).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})} · ${n.dept}</div>
+      </div>
+      <span style="font-size:10px;font-family:'JetBrains Mono',monospace;color:${n.daysLeft<=7?'var(--accent2)':n.daysLeft<=14?'var(--accent4)':'var(--accent3)'}">${n.daysLeft}h</span>
+    </div>`).join('');
+
+  // Badge count urgent
+  const urgent = notifs.filter(n => n.daysLeft <= 7).length;
+  const nb = document.getElementById('notifBadge');
+  if (nb) { nb.textContent = urgent; nb.style.display = urgent > 0 ? 'inline' : 'none'; }
+}
+
+// --- Progress Tracking ---
+const PROGRESS_DATA = [
+  { name: 'Electrical Safety', progress: 80, status: 'prog', score: null },
+  { name: 'Mechanical Maintenance', progress: 45, status: 'prog', score: null },
+  { name: 'Work Permit System', progress: 100, status: 'done', score: 92 },
+  { name: 'Plant Operations', progress: 20, status: 'prog', score: null },
+  { name: 'Preventive Maintenance', progress: 0, status: 'pend', score: null },
+];
+
+function renderProgress() {
+  const el = document.getElementById('progressList');
+  if (!el) return;
+  el.innerHTML = PROGRESS_DATA.map(p => `
+    <div class="progress-item">
+      <div class="progress-header">
+        <span style="font-weight:500">${p.name}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${p.score ? `<span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent3)">${p.score}/100</span>` : ''}
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:${p.status==='done'?'var(--accent3)':p.status==='prog'?'var(--accent)':'var(--text2)'}">${p.progress}%</span>
+          <span class="spill ${p.status}" style="font-size:9px">${p.status==='done'?'Selesai':p.status==='prog'?'Berjalan':'Belum'}</span>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${p.progress}%;background:${p.status==='done'?'var(--accent3)':p.status==='prog'?'var(--accent)':'rgba(255,255,255,0.1)'}"></div></div>
+    </div>`).join('');
+}
+
+// --- Export PDF ---
+function exportPDF() {
+  toast('Menyiapkan laporan PDF...', 'info');
+  setTimeout(() => {
+    window.print();
+    toast('Laporan siap dicetak / disimpan sebagai PDF ✓', 'success');
+  }, 500);
+}
+
+// Init new features when section loads
+const origGo = go;
+function go(id, el) {
+  origGo(id, el);
+  if (id === 'attendance') { renderAttendance(); }
+  if (id === 'materials') { renderMaterials(); }
+  if (id === 'admin-materials') { renderAdminMaterials(); }
+  if (id === 'notifications') { renderNotifications(); }
+  if (id === 'progress') { renderProgress(); }
+}
+
+// Show notification badge on load
+setTimeout(renderNotifications, 2000);
 
 document.addEventListener('DOMContentLoaded', init);
 
