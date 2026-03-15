@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical Plant Learning Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+
+:root{--bg:#0a0e14;--bg2:#111720;--bg3:#172030;--accent:#00d4ff;--accent2:#ff6b2b;--accent3:#39e075;--accent4:#f5c842;--text:#e8f0fe;--text2:#8aa0c0;--border:rgba(0,212,255,0.12);--card:rgba(17,23,32,0.97);--glow:rgba(0,212,255,0.15);--admin:#aa88ff;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+
+/* AUTH */
+.auth-wrap{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1000;background:var(--bg);}
+.auth-wrap.hidden{display:none;}
+.auth-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,0.07) 0%,transparent 70%);pointer-events:none;animation:glowPulse 6s ease-in-out infinite;}
+@keyframes glowPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);opacity:0.7;}}
+.auth-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:38px 42px;width:100%;max-width:440px;position:relative;z-index:1;animation:slideUp 0.45s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+.auth-logo{text-align:center;margin-bottom:26px;}
+.auth-logo-icon{width:54px;height:54px;background:linear-gradient(135deg,var(--accent),#0077aa);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 11px;box-shadow:0 0 28px rgba(0,212,255,0.3);}
+.auth-logo-icon svg{width:27px;height:27px;}
+.auth-logo-title{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:2px;color:var(--accent);}
+.auth-logo-sub{font-size:10.5px;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.auth-tabs{display:flex;background:rgba(255,255,255,0.04);border-radius:9px;padding:3px;margin-bottom:26px;gap:3px;}
+.auth-tab{flex:1;text-align:center;padding:9px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text2);transition:all 0.2s;}
+.auth-tab.active{background:var(--accent);color:#0a0e14;}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:11px;color:var(--text2);letter-spacing:0.4px;margin-bottom:5px;display:block;}
+.form-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:all 0.2s;}
+.form-input:focus{border-color:rgba(0,212,255,0.4);background:rgba(0,212,255,0.04);}
+.form-input::placeholder{color:rgba(138,160,192,0.5);}
+.form-input.error{border-color:rgba(255,107,43,0.5);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-select{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238aa0c0' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;transition:all 0.2s;}
+.form-select:focus{border-color:rgba(0,212,255,0.4);}
+.form-select option{background:#111720;}
+.err-msg{font-size:10.5px;color:var(--accent2);margin-top:3px;display:none;}
+.err-msg.show{display:block;}
+.btn-auth{width:100%;padding:12px;background:var(--accent);color:#0a0e14;border:none;border-radius:8px;font-size:13.5px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:6px;transition:all 0.2s;}
+.btn-auth:hover{background:#22e8ff;box-shadow:0 0 22px rgba(0,212,255,0.3);}
+.auth-divider{text-align:center;color:var(--text2);font-size:10.5px;margin:14px 0;position:relative;}
+.auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--border);}
+.auth-divider::before{left:0;}.auth-divider::after{right:0;}
+.demo-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.1);border-radius:9px;padding:12px 14px;margin-top:14px;}
+.demo-title{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);margin-bottom:9px;}
+.demo-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.demo-row:last-child{margin-bottom:0;}
+.demo-role{font-size:11px;font-weight:500;min-width:60px;}
+.demo-role.a{color:var(--admin);}.demo-role.p{color:var(--accent3);}
+.demo-cred{font-size:10.5px;font-family:'JetBrains Mono',monospace;color:var(--text2);flex:1;}
+.demo-fill{font-size:10px;padding:3px 9px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:5px;cursor:pointer;color:var(--text2);transition:all 0.18s;}
+.demo-fill:hover{border-color:var(--accent);color:var(--accent);}
+
+/* TOAST */
+.toast{position:fixed;top:18px;right:18px;z-index:9999;padding:11px 16px;border-radius:9px;font-size:12.5px;font-weight:500;transform:translateX(120%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);max-width:300px;}
+.toast.show{transform:translateX(0);}
+.toast.success{background:#0d2a18;border:1px solid rgba(57,224,117,0.3);color:var(--accent3);}
+.toast.error{background:#2a0d0d;border:1px solid rgba(255,107,43,0.3);color:var(--accent2);}
+.toast.info{background:#0d1e2a;border:1px solid rgba(0,212,255,0.3);color:var(--accent);}
+
+/* APP */
+.app-wrap{display:none;}
+.app-wrap.visible{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:256px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;}
+.logo-area{padding:24px 22px 16px;border-bottom:1px solid var(--border);}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#0077aa);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;box-shadow:0 0 16px rgba(0,212,255,0.3);}
+.logo-icon svg{width:19px;height:19px;}
+.logo-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--accent);line-height:1;}
+.logo-sub{font-size:9px;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.nav-section{flex:1;overflow-y:auto;padding:12px 0;}
+.nav-label{font-size:8.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text2);padding:10px 22px 4px;opacity:0.55;}
+.nav-label.admin-only,.nav-item.admin-only{display:none;}
+.nav-label.admin-only.show,.nav-item.admin-only.show{display:block;}
+.nav-item.admin-only.show{display:flex;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 22px;cursor:pointer;border-left:3px solid transparent;transition:all 0.18s;font-size:12.5px;color:var(--text2);}
+.nav-item:hover{background:rgba(0,212,255,0.04);color:var(--text);}
+.nav-item.active{border-left-color:var(--accent);background:rgba(0,212,255,0.06);color:var(--accent);}
+.nav-item svg{width:16px;height:16px;opacity:0.7;flex-shrink:0;}
+.nav-item.active svg{opacity:1;}
+.nbadge{margin-left:auto;font-size:9.5px;padding:2px 6px;border-radius:20px;font-family:'JetBrains Mono',monospace;}
+.nbadge.orange{background:var(--accent2);color:#fff;}
+.nbadge.green{background:var(--accent3);color:#0a2010;}
+.nbadge.purple{background:var(--admin);color:#0a0e14;}
+.sidebar-footer{padding:12px 22px 16px;border-top:1px solid var(--border);}
+.user-card{display:flex;align-items:center;gap:9px;cursor:pointer;padding:7px;border-radius:9px;transition:background 0.18s;margin:-7px;margin-bottom:0;}
+.user-card:hover{background:rgba(255,255,255,0.03);}
+.u-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.u-name{font-size:12.5px;font-weight:500;}
+.u-role{font-size:10px;color:var(--text2);}
+.role-pill{margin-left:auto;font-size:9px;padding:2px 7px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.rp-admin{background:rgba(170,136,255,0.15);color:var(--admin);border:1px solid rgba(170,136,255,0.3);}
+.rp-peserta{background:rgba(57,224,117,0.1);color:var(--accent3);border:1px solid rgba(57,224,117,0.3);}
+.btn-logout{margin-top:9px;width:100%;padding:7px;background:transparent;border:1px solid rgba(255,107,43,0.2);border-radius:7px;color:rgba(255,107,43,0.7);font-size:11.5px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.18s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.btn-logout:hover{border-color:var(--accent2);color:var(--accent2);background:rgba(255,107,43,0.05);}
+
+/* MAIN */
+.main{margin-left:256px;min-height:100vh;position:relative;z-index:1;}
+.topbar{height:60px;background:rgba(10,14,20,0.92);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:12px;backdrop-filter:blur(12px);position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--text);flex:1;}
+.topbar-title span{color:var(--accent);}
+.search-bar{display:flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:7px 12px;width:210px;}
+.search-bar input{background:transparent;border:none;outline:none;color:var(--text);font-size:12.5px;font-family:'DM Sans',sans-serif;width:100%;}
+.search-bar input::placeholder{color:var(--text2);}
+.icon-btn{width:32px;height:32px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.18s;position:relative;}
+.icon-btn:hover{border-color:var(--accent);}
+.icon-btn .dot{position:absolute;top:5px;right:5px;width:6px;height:6px;background:var(--accent2);border-radius:50%;border:1.5px solid var(--bg);}
+.content{padding:24px 28px;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* COMPONENT STYLES */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:17px 19px;position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(0,0,0,0.3);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.c1::before{background:var(--accent);}.c2::before{background:var(--accent2);}.c3::before{background:var(--accent3);}.c4::before{background:var(--accent4);}
+.stat-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:11px;}
+.c1 .stat-icon{background:rgba(0,212,255,0.1);}.c2 .stat-icon{background:rgba(255,107,43,0.1);}.c3 .stat-icon{background:rgba(57,224,117,0.1);}.c4 .stat-icon{background:rgba(245,200,66,0.1);}
+.stat-value{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;line-height:1;margin-bottom:3px;}
+.c1 .stat-value{color:var(--accent);}.c2 .stat-value{color:var(--accent2);}.c3 .stat-value{color:var(--accent3);}.c4 .stat-value{color:var(--accent4);}
+.stat-label{font-size:11px;color:var(--text2);}
+.stat-delta{margin-top:6px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--accent3);}
+.stat-delta.down{color:var(--accent2);}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:19px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-title{font-family:'Bebas Neue',sans-serif;font-size:14.5px;letter-spacing:1px;color:var(--text);}
+.card-badge{font-size:9.5px;font-family:'JetBrains Mono',monospace;padding:3px 8px;border-radius:20px;border:1px solid var(--border);color:var(--text2);}
+.card-badge.live{border-color:rgba(57,224,117,0.3);color:var(--accent3);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
+.two-col{display:grid;grid-template-columns:2fr 1fr;gap:13px;margin-bottom:20px;}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:20px;}
+.progress-item{margin-bottom:13px;}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:12px;}
+.progress-bar{height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:3px;transition:width 1.5s cubic-bezier(0.4,0,0.2,1);}
+.activity-item{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);align-items:flex-start;}
+.activity-item:last-child{border-bottom:none;}
+.act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.act-text{font-size:12px;line-height:1.5;}
+.act-text .act-name{font-weight:500;color:var(--text);}
+.act-time{font-size:10px;color:var(--text2);margin-top:1px;font-family:'JetBrains Mono',monospace;}
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:100px;padding-top:8px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end;}
+.bar{width:100%;border-radius:3px 3px 0 0;background:linear-gradient(180deg,var(--accent),rgba(0,212,255,0.3));min-height:3px;}
+.bar.orange{background:linear-gradient(180deg,var(--accent2),rgba(255,107,43,0.3));}
+.bar-label{font-size:9px;color:var(--text2);font-family:'JetBrains Mono',monospace;}
+.donut-wrap{display:flex;align-items:center;gap:18px;}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:11.5px;}
+.legend-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0;}
+.legend-val{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;}
+.hero-banner{background:linear-gradient(135deg,#0a2030 0%,#0d1520 40%,#14202a 100%);border:1px solid var(--border);border-radius:14px;padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:22px;position:relative;overflow:hidden;}
+.hero-banner::before{content:'';position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,0.07) 0%,transparent 70%);}
+.hero-greeting{font-size:12px;color:var(--text2);margin-bottom:4px;}
+.hero-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;margin-bottom:6px;}
+.hero-name span{color:var(--accent);}
+.hero-sub{font-size:12.5px;color:var(--text2);max-width:380px;line-height:1.5;}
+.hero-stats{display:flex;gap:26px;z-index:1;}
+.hero-stat-val{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;color:var(--accent);}
+.hero-stat-lbl{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;}
+.course-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:20px;}
+.course-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;cursor:pointer;}
+.course-card:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,0.4);border-color:rgba(0,212,255,0.2);}
+.course-thumb{height:105px;position:relative;display:flex;align-items:center;justify-content:center;font-size:34px;}
+.t1{background:linear-gradient(135deg,#0d2a3a,#0a4060);}.t2{background:linear-gradient(135deg,#2a1a0d,#603010);}.t3{background:linear-gradient(135deg,#0d2a15,#105028);}.t4{background:linear-gradient(135deg,#2a2a0d,#504010);}.t5{background:linear-gradient(135deg,#1a0d2a,#300860);}.t6{background:linear-gradient(135deg,#2a0d0d,#600010);}
+.course-level{position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;}
+.level-basic{background:rgba(57,224,117,0.2);color:var(--accent3);border:1px solid rgba(57,224,117,0.3);}
+.level-inter{background:rgba(245,200,66,0.2);color:var(--accent4);border:1px solid rgba(245,200,66,0.3);}
+.level-adv{background:rgba(255,107,43,0.2);color:var(--accent2);border:1px solid rgba(255,107,43,0.3);}
+.course-body{padding:13px;}
+.course-cat{font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.course-name{font-size:13px;font-weight:600;margin-bottom:6px;line-height:1.4;}
+.course-meta{display:flex;gap:10px;font-size:10px;color:var(--text2);margin-bottom:9px;}
+.course-prog-bar{height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:3px;}
+.course-prog-fill{height:100%;background:var(--accent);border-radius:2px;}
+.course-prog-text{font-size:9px;color:var(--text2);font-family:'JetBrains Mono',monospace;}
+.data-table{width:100%;border-collapse:collapse;font-size:12px;}
+.data-table th{text-align:left;padding:8px 12px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);border-bottom:1px solid var(--border);font-weight:500;font-family:'JetBrains Mono',monospace;}
+.data-table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:rgba(0,212,255,0.02);}
+.spill{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:20px;font-family:'JetBrains Mono',monospace;}
+.spill::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor;}
+.spill.done{background:rgba(57,224,117,0.1);color:var(--accent3);border:1px solid rgba(57,224,117,0.2);}
+.spill.prog{background:rgba(0,212,255,0.1);color:var(--accent);border:1px solid rgba(0,212,255,0.2);}
+.spill.pend{background:rgba(245,200,66,0.1);color:var(--accent4);border:1px solid rgba(245,200,66,0.2);}
+.sbar-wrap{display:flex;align-items:center;gap:8px;}
+.sbar{flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
+.sbar-fill{height:100%;border-radius:2px;background:var(--accent);}
+.cert-card{background:linear-gradient(135deg,var(--bg2),#0d1e2e);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:18px;display:flex;gap:14px;margin-bottom:9px;align-items:center;transition:transform 0.2s;cursor:pointer;}
+.cert-card:hover{transform:translateX(4px);}
+.cert-icon{width:48px;height:48px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,212,255,0.05));border:1px solid rgba(0,212,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.cert-info{flex:1;}
+.cert-name{font-size:13.5px;font-weight:600;margin-bottom:3px;}
+.cert-date{font-size:10px;color:var(--text2);font-family:'JetBrains Mono',monospace;}
+.cert-score{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent3);}
+.quiz-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:13px;}
+.q-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);margin-bottom:6px;}
+.q-text{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.5;}
+.q-options{display:flex;flex-direction:column;gap:8px;}
+.q-option{padding:10px 14px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:12.5px;transition:all 0.15s;background:rgba(255,255,255,0.02);}
+.q-option:hover{border-color:var(--accent);background:rgba(0,212,255,0.04);}
+.q-option.selected{border-color:var(--accent);background:rgba(0,212,255,0.08);color:var(--accent);}
+.sched-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.04);align-items:center;}
+.sched-time{width:52px;flex-shrink:0;text-align:center;}
+.sched-time .time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);}
+.sched-time .ampm{font-size:9px;color:var(--text2);}
+.sched-line{width:2px;align-self:stretch;background:var(--border);flex-shrink:0;position:relative;}
+.sched-line::before{content:'';position:absolute;top:6px;left:50%;transform:translateX(-50%);width:7px;height:7px;border-radius:50%;background:var(--accent);border:2px solid var(--bg2);}
+.sched-info{flex:1;}
+.sched-name{font-size:12.5px;font-weight:500;}
+.sched-detail{font-size:10.5px;color:var(--text2);margin-top:1px;}
+.lb-item{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.lb-rank{width:20px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text2);}
+.lb-rank.top1{color:#ffd700;}.lb-rank.top2{color:#c0c0c0;}.lb-rank.top3{color:#cd7f32;}
+.lb-avatar{width:29px;height:29px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.lb-name{flex:1;font-size:12.5px;font-weight:500;}
+.lb-dept{font-size:10px;color:var(--text2);}
+.lb-pts{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent4);}
+.btn{padding:7px 16px;border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;border:none;transition:all 0.18s;}
+.btn-primary{background:var(--accent);color:#0a0e14;}
+.btn-primary:hover{background:#22e8ff;box-shadow:0 0 16px rgba(0,212,255,0.3);}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-danger{background:transparent;border:1px solid rgba(255,107,43,0.3);color:var(--accent2);}
+.btn-danger:hover{background:rgba(255,107,43,0.08);}
+
+/* PROFILE */
+.profile-grid{display:grid;grid-template-columns:270px 1fr;gap:16px;margin-bottom:20px;}
+.prof-av-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:26px 18px;text-align:center;}
+.prof-av-big{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;margin:0 auto 12px;border:3px solid var(--border);}
+.prof-fullname{font-size:16px;font-weight:600;margin-bottom:3px;}
+.prof-role-tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:3px 9px;border-radius:20px;margin-bottom:14px;}
+.prof-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px;}
+.p-stat{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;}
+.p-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);}
+.p-stat-lbl{font-size:9.5px;color:var(--text2);}
+.fsec-title{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--text2);border-bottom:1px solid var(--border);padding-bottom:7px;margin:16px 0 12px;}
+.save-ind{font-size:11px;color:var(--accent3);display:none;margin-left:8px;}
+.save-ind.show{display:inline;}
+
+/* ADMIN */
+.ul-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.ul-item:last-child{border-bottom:none;}
+.ul-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.ul-info{flex:1;}
+.ul-name{font-size:12.5px;font-weight:500;}
+.ul-detail{font-size:10.5px;color:var(--text2);font-family:'JetBrains Mono',monospace;}
+.ul-actions{display:flex;gap:5px;}
+.ul-actions button{font-size:10px;padding:3px 9px;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);transition:all 0.18s;font-family:'DM Sans',sans-serif;}
+.ul-actions button:hover{border-color:var(--accent);color:var(--accent);}
+.ul-actions button.del:hover{border-color:var(--accent2);color:var(--accent2);}
+.ul-actions button.promo{border-color:rgba(170,136,255,0.3);color:var(--admin);}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:15px;padding:26px;width:100%;max-width:400px;transform:scale(0.95);transition:transform 0.2s;}
+.modal-overlay.open .modal-box{transform:scale(1);}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;margin-bottom:14px;}
+.modal-btns{display:flex;gap:9px;margin-top:18px;justify-content:flex-end;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(13px);}to{opacity:1;transform:translateY(0);}}
+.fade-up{animation:fadeUp 0.4s ease forwards;}
+.fu1{animation-delay:0.04s;opacity:0;}.fu2{animation-delay:0.09s;opacity:0;}.fu3{animation-delay:0.14s;opacity:0;}.fu4{animation-delay:0.19s;opacity:0;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px;}
+
+
+/* DB STATUS */
+.db-badge{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-family:'JetBrains Mono',monospace;padding:3px 9px;border-radius:20px;margin-left:8px;}
+.db-badge.connected{background:rgba(57,224,117,0.1);border:1px solid rgba(57,224,117,0.2);color:var(--accent3);}
+.db-badge.offline{background:rgba(255,107,43,0.1);border:1px solid rgba(255,107,43,0.2);color:var(--accent2);}
+.db-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;}
+
+/* LOADING SCREEN */
+.loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2000;gap:16px;transition:opacity 0.3s;}
+.loading-screen.hidden{opacity:0;pointer-events:none;}
+.loading-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--accent);}
+.loading-bar{width:200px;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
+.loading-bar-fill{height:100%;background:var(--accent);border-radius:2px;animation:loadBar 1.5s ease-in-out infinite;}
+@keyframes loadBar{0%{width:0;margin-left:0;}50%{width:60%;margin-left:20%;}100%{width:0;margin-left:100%;}}
+.loading-text{font-size:11px;color:var(--text2);font-family:'JetBrains Mono',monospace;}
+
+/* BTN LOADING */
+.btn-auth .spin{display:none;width:16px;height:16px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
+.btn-auth.loading .spin{display:block;}
+.btn-auth.loading .btn-text{display:none;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ADMIN LIST */
+.ul-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.ul-item:last-child{border-bottom:none;}
+.ul-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.ul-info{flex:1;}
+.ul-name{font-size:12.5px;font-weight:500;}
+.ul-detail{font-size:10.5px;color:var(--text2);font-family:'JetBrains Mono',monospace;}
+.ul-actions{display:flex;gap:5px;}
+.ul-actions button{font-size:10px;padding:3px 9px;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);transition:all 0.18s;font-family:'DM Sans',sans-serif;}
+.ul-actions button:hover{border-color:var(--accent);color:var(--accent);}
+.ul-actions button.del:hover{border-color:var(--accent2);color:var(--accent2);}
+.ul-actions button.promo{border-color:rgba(170,136,255,0.3);color:var(--admin);}
+.spill{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:20px;font-family:'JetBrains Mono',monospace;}
+.spill::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor;}
+.spill.done{background:rgba(57,224,117,0.1);color:var(--accent3);border:1px solid rgba(57,224,117,0.2);}
+.spill.prog{background:rgba(0,212,255,0.1);color:var(--accent);border:1px solid rgba(0,212,255,0.2);}
+.spill.pend{background:rgba(245,200,66,0.1);color:var(--accent4);border:1px solid rgba(245,200,66,0.2);}
+
+/* PROFILE */
+.profile-grid{display:grid;grid-template-columns:270px 1fr;gap:16px;margin-bottom:20px;}
+.prof-av-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:26px 18px;text-align:center;}
+.prof-av-big{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;margin:0 auto 12px;border:3px solid var(--border);}
+.prof-fullname{font-size:16px;font-weight:600;margin-bottom:3px;}
+.prof-role-tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:3px 9px;border-radius:20px;margin-bottom:14px;}
+.prof-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px;}
+.p-stat{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;}
+.p-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);}
+.p-stat-lbl{font-size:9.5px;color:var(--text2);}
+.fsec-title{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--text2);border-bottom:1px solid var(--border);padding-bottom:7px;margin:16px 0 12px;}
+.save-ind{font-size:11px;color:var(--accent3);display:none;margin-left:8px;}
+.save-ind.show{display:inline;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:15px;padding:26px;width:100%;max-width:400px;transform:scale(0.95);transition:transform 0.2s;}
+.modal-overlay.open .modal-box{transform:scale(1);}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;margin-bottom:14px;}
+.modal-btns{display:flex;gap:9px;margin-top:18px;justify-content:flex-end;}
+
+/* LB */
+.lb-item{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.lb-rank{width:20px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text2);}
+.lb-rank.top1{color:#ffd700;}.lb-rank.top2{color:#c0c0c0;}.lb-rank.top3{color:#cd7f32;}
+.lb-avatar{width:29px;height:29px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.lb-name{flex:1;font-size:12.5px;font-weight:500;}
+.lb-dept{font-size:10px;color:var(--text2);}
+.lb-pts{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent4);}
+
+/* BTN */
+.btn{padding:7px 16px;border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;border:none;transition:all 0.18s;}
+.btn-primary{background:var(--accent);color:#0a0e14;}
+.btn-primary:hover{background:#22e8ff;box-shadow:0 0 16px rgba(0,212,255,0.3);}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-danger{background:transparent;border:1px solid rgba(255,107,43,0.3);color:var(--accent2);}
+.btn-danger:hover{background:rgba(255,107,43,0.08);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(13px);}to{opacity:1;transform:translateY(0);}}
+.fade-up{animation:fadeUp 0.4s ease forwards;}
+.fu1{animation-delay:0.04s;opacity:0;}.fu2{animation-delay:0.09s;opacity:0;}.fu3{animation-delay:0.14s;opacity:0;}.fu4{animation-delay:0.19s;opacity:0;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-logo">Technical Plant LMS</div>
+  <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  <div class="loading-text">Menghubungkan ke database...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- AUTH -->
+<div class="auth-wrap" id="authWrap">
+  <div class="auth-glow"></div>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+      <div class="auth-logo-title">Technical Plant</div>
+      <div class="auth-logo-sub">Learning Center</div>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Masuk</div>
+      <div class="auth-tab" id="tabReg" onclick="switchTab('reg')">Daftar Akun</div>
+    </div>
+    <!-- LOGIN -->
+    <div id="loginForm">
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="lEmail" type="email" placeholder="email@perusahaan.com"></div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="lPass" type="password" placeholder="••••••••"><div class="err-msg" id="lErr">Email atau password salah</div></div>
+      <button class="btn-auth" id="btnLogin" onclick="doLogin()"><span class="btn-text">Masuk ke Dashboard</span><div class="spin"></div></button>
+      <div class="auth-divider">Demo Akun</div>
+      <div class="demo-box">
+        <div class="demo-title">Coba langsung tanpa daftar</div>
+        <div class="demo-row"><div class="demo-role a">👑 Admin</div><div class="demo-cred">admin@plant.id / admin123</div><button class="demo-fill" onclick="fillDemo('admin@plant.id','admin123')">Isi</button></div>
+        <div class="demo-row"><div class="demo-role p">👤 Peserta</div><div class="demo-cred">ahmad@plant.id / peserta123</div><button class="demo-fill" onclick="fillDemo('ahmad@plant.id','peserta123')">Isi</button></div>
+      </div>
+    </div>
+    <!-- REGISTER -->
+    <div id="regForm" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Nama Depan</label><input class="form-input" id="rFirst" placeholder="Ahmad"></div>
+        <div class="form-group"><label class="form-label">Nama Belakang</label><input class="form-input" id="rLast" placeholder="Rasyid"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="rEmail" type="email" placeholder="email@perusahaan.com"><div class="err-msg" id="rEmailErr">Email sudah terdaftar atau tidak valid</div></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Departemen</label>
+          <select class="form-select" id="rDept"><option value="">-- Pilih --</option><option>Process Engineering</option><option>Mechanical</option><option>Instrumentation</option><option>Electrical</option><option>HSE Department</option><option>Commissioning</option><option>Environmental</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Lokasi / Site</label>
+          <select class="form-select" id="rSite"><option value="">-- Pilih --</option><option>Kalimantan Timur</option><option>Kalimantan Selatan</option><option>Sumatera</option><option>Jawa</option><option>Papua</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="rPass" type="password" placeholder="Min. 6 karakter"><div class="err-msg" id="rPassErr">Min. 6 karakter</div></div>
+        <div class="form-group"><label class="form-label">Konfirmasi</label><input class="form-input" id="rPass2" type="password" placeholder="Ulangi password"><div class="err-msg" id="rPass2Err">Tidak cocok</div></div>
+      </div>
+      <button class="btn-auth" id="btnRegister" onclick="doRegister()"><span class="btn-text">Buat Akun Sekarang</span><div class="spin"></div></button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app-wrap" id="appWrap">
+  <div class="sidebar">
+    <div class="logo-area">
+      <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+      <div class="logo-title">Technical Plant</div>
+      <div class="logo-sub">Learning Center</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Overview</div>
+      <div class="nav-item active" onclick="go('dashboard',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</div>
+      <div class="nav-item" onclick="go('my-learning',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>My Learning<span class="nbadge green">3</span></div>
+      <div class="nav-item" onclick="go('schedule',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Jadwal Training</div>
+      <div class="nav-label">Materi</div>
+      <div class="nav-item" onclick="go('courses',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Kursus & Modul<span class="nbadge orange">24</span></div>
+      <div class="nav-item" onclick="go('quiz',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>Kuis & Ujian</div>
+      <div class="nav-item" onclick="go('certificates',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>Sertifikat</div>
+      <div class="nav-label">Analitik</div>
+      <div class="nav-item" onclick="go('leaderboard',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Leaderboard</div>
+      <div class="nav-item" onclick="go('report',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Laporan</div>
+      <div class="nav-label admin-only">Admin Panel</div>
+      <div class="nav-item admin-only" onclick="go('admin-users',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Kelola Peserta<span class="nbadge purple" id="ub">0</span></div>
+      <div class="nav-item" onclick="go('profile',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>Profil Saya</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-card" onclick="go('profile',document.querySelector('[onclick*=profile]'))">
+        <div class="u-av" id="sbAv"></div>
+        <div><div class="u-name" id="sbName">—</div><div class="u-role" id="sbDept">—</div></div>
+        <div class="role-pill" id="sbRP"></div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>Keluar
+      </button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="ttl">Dashboard <span>Overview</span></div>
+      <span class="db-badge" id="dbBadge">● Connecting...</span>
+      <div class="search-bar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8aa0c0" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Cari modul, kursus..."></div>
+      <div class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8aa0c0" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg><div class="dot"></div></div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="section active" id="section-dashboard">
+        <div class="hero-banner fade-up fu1">
+          <div>
+            <div class="hero-greeting">Selamat datang kembali, 👋</div>
+            <div class="hero-name" id="heroName">—</div>
+            <div style="font-size:12.5px;color:var(--text2);max-width:380px;line-height:1.5">Anda memiliki 2 modul yang belum diselesaikan minggu ini. Lanjutkan perjalanan belajar Anda!</div>
+          </div>
+          <div style="display:flex;gap:26px;z-index:1">
+            <div style="text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent)">847</div><div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px">Poin XP</div></div>
+            <div style="text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent3)">12</div><div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px">Selesai</div></div>
+            <div style="text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent4)">Rank #4</div><div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px">Peringkat</div></div>
+          </div>
+        </div>
+        <div class="stats-grid fade-up fu2">
+          <div class="stat-card c1"><div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div><div class="stat-value">24</div><div class="stat-label">Total Modul</div><div class="stat-delta">▲ +3 baru</div></div>
+          <div class="stat-card c2"><div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6b2b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stat-value">156</div><div class="stat-label">Jam Belajar</div><div class="stat-delta down">▼ -5 jam target</div></div>
+          <div class="stat-card c3"><div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#39e075" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-value">12</div><div class="stat-label">Kursus Selesai</div><div class="stat-delta">▲ 3 bulan ini</div></div>
+          <div class="stat-card c4"><div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f5c842" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div><div class="stat-value" id="rTotal">—</div><div class="stat-label">Total Peserta</div><div class="stat-delta">▲ Real-time DB</div></div>
+        </div>
+        <div class="two-col fade-up fu3">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Progress Kategori Materi</div><div class="card-badge">Q2 2025</div></div>
+            <div class="progress-item"><div class="progress-header"><span>Mechanical Engineering</span><span style="color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:10.5px">82%</span></div><div class="progress-bar"><div class="progress-fill" style="width:82%;background:var(--accent)"></div></div></div>
+            <div class="progress-item"><div class="progress-header"><span>Electrical & Instrumentation</span><span style="color:var(--accent2);font-family:'JetBrains Mono',monospace;font-size:10.5px">65%</span></div><div class="progress-bar"><div class="progress-fill" style="width:65%;background:var(--accent2)"></div></div></div>
+            <div class="progress-item"><div class="progress-header"><span>Process Safety Management</span><span style="color:var(--accent3);font-family:'JetBrains Mono',monospace;font-size:10.5px">91%</span></div><div class="progress-bar"><div class="progress-fill" style="width:91%;background:var(--accent3)"></div></div></div>
+            <div class="progress-item"><div class="progress-header"><span>Environmental Compliance</span><span style="color:var(--accent4);font-family:'JetBrains Mono',monospace;font-size:10.5px">48%</span></div><div class="progress-bar"><div class="progress-fill" style="width:48%;background:var(--accent4)"></div></div></div>
+            <div class="progress-item"><div class="progress-header"><span>Reliability & Maintenance</span><span style="color:#aa88ff;font-family:'JetBrains Mono',monospace;font-size:10.5px">74%</span></div><div class="progress-bar"><div class="progress-fill" style="width:74%;background:#aa88ff"></div></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Aktivitas Terkini</div><div class="card-badge live">● LIVE</div></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--accent3)"></div><div><div class="act-text"><span class="act-name">Budi Santoso</span> selesaikan <em>Pump Maintenance L2</em></div><div class="act-time">2 menit lalu</div></div></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--accent)"></div><div><div class="act-text"><span class="act-name">Siti Rahma</span> dapat sertifikat <em>Safety Induction</em></div><div class="act-time">14 menit lalu</div></div></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--accent2)"></div><div><div class="act-text"><span class="act-name">Rizky Pratama</span> mulai <em>Hazardous Material</em></div><div class="act-time">31 menit lalu</div></div></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--accent4)"></div><div><div class="act-text"><span class="act-name">Dewi Kusuma</span> skor 94/100 <em>P&ID Reading</em></div><div class="act-time">1 jam lalu</div></div></div>
+          </div>
+        </div>
+        <div class="three-col fade-up fu4">
+          <div class="card"><div class="card-header"><div class="card-title">Aktivitas Mingguan</div></div><div class="bar-chart"><div class="bar-col"><div class="bar" style="height:55%"></div><div class="bar-label">Sen</div></div><div class="bar-col"><div class="bar" style="height:80%"></div><div class="bar-label">Sel</div></div><div class="bar-col"><div class="bar" style="height:40%"></div><div class="bar-label">Rab</div></div><div class="bar-col"><div class="bar orange" style="height:95%"></div><div class="bar-label">Kam</div></div><div class="bar-col"><div class="bar" style="height:62%"></div><div class="bar-label">Jum</div></div><div class="bar-col"><div class="bar" style="height:30%"></div><div class="bar-label">Sab</div></div><div class="bar-col"><div class="bar" style="height:15%"></div><div class="bar-label">Min</div></div></div></div>
+          <div class="card"><div class="card-header"><div class="card-title">Status Peserta</div></div><div class="donut-wrap"><svg width="88" height="88" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="16"/><circle cx="50" cy="50" r="38" fill="none" stroke="#00d4ff" stroke-width="16" stroke-dasharray="95 144" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 50 50)"/><circle cx="50" cy="50" r="38" fill="none" stroke="#39e075" stroke-width="16" stroke-dasharray="46 144" stroke-dashoffset="-95" stroke-linecap="round" transform="rotate(-90 50 50)"/><text x="50" y="54" text-anchor="middle" font-family="Bebas Neue" font-size="17" fill="#e8f0fe" id="dnutTotal">—</text></svg><div class="donut-legend"><div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div><span>Aktif</span><div class="legend-val" style="color:var(--accent)" id="dnutAktif">—</div></div><div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div><span>Selesai</span><div class="legend-val" style="color:var(--accent3)">57</div></div><div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.2)"></div><span>Belum</span><div class="legend-val" style="color:var(--text2)">13</div></div></div></div></div>
+          <div class="card"><div class="card-header"><div class="card-title">Training Mendatang</div></div><div class="activity-item" style="padding:8px 0"><div class="act-dot" style="background:var(--accent);margin-top:3px"></div><div><div class="act-text"><span class="act-name">Boiler Safety Certification</span></div><div class="act-time">Senin 17 Mar — 08:00</div></div></div><div class="activity-item" style="padding:8px 0"><div class="act-dot" style="background:var(--accent2);margin-top:3px"></div><div><div class="act-text"><span class="act-name">HAZOP Study Workshop</span></div><div class="act-time">Rabu 19 Mar — 09:00</div></div></div><div class="activity-item" style="padding:8px 0"><div class="act-dot" style="background:var(--accent3);margin-top:3px"></div><div><div class="act-text"><span class="act-name">Gas Chromatography Ops</span></div><div class="act-time">Jumat 21 Mar — 13:00</div></div></div></div>
+        </div>
+      </div>
+
+      <!-- MY LEARNING -->
+      <div class="section" id="section-my-learning">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:20px" class="fade-up fu1">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''"><div style="height:105px;background:linear-gradient(135deg,#0d2a3a,#0a4060);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">⚙️<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(245,200,66,0.2);color:var(--accent4);border:1px solid rgba(245,200,66,0.3);font-family:'JetBrains Mono',monospace">INTERMEDIATE</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:1px;margin-bottom:4px">MECHANICAL</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Rotating Equipment Fundamentals</div><div style="font-size:10px;color:var(--text2);margin-bottom:9px">⏱ 12 jam · 📖 8 modul</div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:3px"><div style="height:100%;width:68%;background:var(--accent);border-radius:2px"></div></div><div style="font-size:9px;color:var(--text2);font-family:'JetBrains Mono',monospace">68% — 5/8 modul</div></div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''"><div style="height:105px;background:linear-gradient(135deg,#2a1a0d,#603010);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🔥<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(255,107,43,0.2);color:var(--accent2);border:1px solid rgba(255,107,43,0.3);font-family:'JetBrains Mono',monospace">ADVANCED</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:1px;margin-bottom:4px">PROCESS SAFETY</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Hazardous Area Classification</div><div style="font-size:10px;color:var(--text2);margin-bottom:9px">⏱ 16 jam · 📖 11 modul</div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:3px"><div style="height:100%;width:35%;background:var(--accent2);border-radius:2px"></div></div><div style="font-size:9px;color:var(--text2);font-family:'JetBrains Mono',monospace">35% — 4/11 modul</div></div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''"><div style="height:105px;background:linear-gradient(135deg,#0d2a15,#105028);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🌿<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(57,224,117,0.2);color:var(--accent3);border:1px solid rgba(57,224,117,0.3);font-family:'JetBrains Mono',monospace">BASIC</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;letter-spacing:1px;margin-bottom:4px">ENVIRONMENT</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">PROPER & Manajemen Lingkungan</div><div style="font-size:10px;color:var(--text2);margin-bottom:9px">⏱ 8 jam · 📖 6 modul</div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:3px"><div style="height:100%;width:15%;background:var(--accent3);border-radius:2px"></div></div><div style="font-size:9px;color:var(--text2);font-family:'JetBrains Mono',monospace">15% — 1/6 modul</div></div></div>
+        </div>
+        <div class="card fade-up fu2"><div class="card-header"><div class="card-title">Riwayat Pembelajaran</div></div>
+          <table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="text-align:left;padding:8px 12px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace">Nama Kursus</th><th style="text-align:left;padding:8px 12px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace">Kategori</th><th style="text-align:left;padding:8px 12px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace">Nilai</th><th style="text-align:left;padding:8px 12px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace">Status</th></tr></thead>
+          <tbody>
+            <tr><td style="padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:500">P&ID Reading & Interpretation</td><td style="padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--accent);font-size:9.5px;font-family:'JetBrains Mono',monospace">PIPING</td><td style="padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.04)"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:94%;background:var(--accent3);border-radius:2px"></div></div><span style="font-size:10.5px;font-family:'JetBrains Mono',monospace;color:var(--accent3)">94</span></div></td><td style="padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.04)"><span class="spill done">Selesai</span></td></tr>
+            <tr><td style="padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:500">Safety Induction & Fire Prevention</td><td style="padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--accent2);font-size:9.5px;font-family:'JetBrains Mono',monospace">SAFETY</td><td style="padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.04)"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:88%;background:var(--accent);border-radius:2px"></div></div><span style="font-size:10.5px;font-family:'JetBrains Mono',monospace;color:var(--accent)">88</span></div></td><td style="padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.04)"><span class="spill done">Selesai</span></td></tr>
+            <tr><td style="padding:11px 12px;font-weight:500">Commissioning & Start-Up</td><td style="padding:11px 12px;color:var(--accent4);font-size:9.5px;font-family:'JetBrains Mono',monospace">COMMISSION</td><td style="padding:11px 12px"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:76%;background:var(--accent);border-radius:2px"></div></div><span style="font-size:10.5px;font-family:'JetBrains Mono',monospace;color:var(--accent)">76</span></div></td><td style="padding:11px 12px"><span class="spill prog">Dalam Proses</span></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- SCHEDULE -->
+      <div class="section" id="section-schedule">
+        <div class="two-col fade-up fu1">
+          <div class="card"><div class="card-header"><div class="card-title">Jadwal Minggu Ini</div></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--accent4)"></div><div style="flex:1"><div class="act-text"><span class="act-name">Boiler Safety Certification</span></div><div class="act-time">Senin 17 Mar · 08:00 WIB · Ruang Training A</div></div><span class="spill pend">Mendatang</span></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--accent)"></div><div style="flex:1"><div class="act-text"><span class="act-name">P&ID Advanced Review</span></div><div class="act-time">Selasa 18 Mar · 13:00 WIB · Online Zoom</div></div><span class="spill prog">Terdaftar</span></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--accent2)"></div><div style="flex:1"><div class="act-text"><span class="act-name">HAZOP Study Workshop</span></div><div class="act-time">Rabu 19 Mar · 09:00 WIB · Ruang Seminar</div></div><span class="spill pend">Mendatang</span></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--accent3)"></div><div style="flex:1"><div class="act-text"><span class="act-name">Gas Chromatography Ops</span></div><div class="act-time">Jumat 21 Mar · 13:00 WIB · Lab Analitik</div></div><span class="spill pend">Mendatang</span></div>
+          </div>
+          <div class="card"><div class="card-header"><div class="card-title">Training Wajib</div></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--accent3)"></div><div style="flex:1"><div class="act-text"><span class="act-name">K3 Annual Refresher</span></div><div class="act-time">Deadline: 31 Mar</div></div><span class="spill done" style="font-size:9.5px">Selesai</span></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--accent2)"></div><div style="flex:1"><div class="act-text"><span class="act-name">Permit to Work Compliance</span></div><div class="act-time">Deadline: 25 Mar</div></div><span class="spill prog" style="font-size:9.5px">Sedang</span></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--accent4)"></div><div style="flex:1"><div class="act-text"><span class="act-name">Emergency Response Drill</span></div><div class="act-time">Deadline: 28 Mar</div></div><span class="spill pend" style="font-size:9.5px">Pending</span></div>
+            <div style="margin-top:13px"><button class="btn btn-primary" style="width:100%;font-size:11.5px">+ Daftarkan Diri</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COURSES -->
+      <div class="section" id="section-courses">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:20px" class="fade-up fu1">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div style="height:105px;background:linear-gradient(135deg,#0d2a3a,#0a4060);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">⚙️<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(245,200,66,0.2);color:var(--accent4);border:1px solid rgba(245,200,66,0.3);font-family:'JetBrains Mono',monospace">INTERMEDIATE</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">MECHANICAL</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Rotating Equipment Fundamentals</div><div style="font-size:10px;color:var(--text2)">⏱ 12 jam · 📖 8 modul · ⭐ 4.8</div></div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div style="height:105px;background:linear-gradient(135deg,#2a1a0d,#603010);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🔥<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(255,107,43,0.2);color:var(--accent2);border:1px solid rgba(255,107,43,0.3);font-family:'JetBrains Mono',monospace">ADVANCED</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">PROCESS SAFETY</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">HAZOP & Risk Assessment</div><div style="font-size:10px;color:var(--text2)">⏱ 18 jam · 📖 12 modul · ⭐ 4.9</div></div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div style="height:105px;background:linear-gradient(135deg,#0d2a15,#105028);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🌿<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(57,224,117,0.2);color:var(--accent3);border:1px solid rgba(57,224,117,0.3);font-family:'JetBrains Mono',monospace">BASIC</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">ENVIRONMENT</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">PROPER & Pengelolaan Limbah</div><div style="font-size:10px;color:var(--text2)">⏱ 8 jam · 📖 6 modul · ⭐ 4.6</div></div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div style="height:105px;background:linear-gradient(135deg,#2a2a0d,#504010);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">⚡<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(245,200,66,0.2);color:var(--accent4);border:1px solid rgba(245,200,66,0.3);font-family:'JetBrains Mono',monospace">INTERMEDIATE</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">ELECTRICAL</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">High Voltage Safety & Systems</div><div style="font-size:10px;color:var(--text2)">⏱ 14 jam · 📖 9 modul · ⭐ 4.7</div></div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div style="height:105px;background:linear-gradient(135deg,#1a0d2a,#300860);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🔬<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(255,107,43,0.2);color:var(--accent2);border:1px solid rgba(255,107,43,0.3);font-family:'JetBrains Mono',monospace">ADVANCED</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">INSTRUMENT</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Process Control & DCS Config</div><div style="font-size:10px;color:var(--text2)">⏱ 20 jam · 📖 14 modul · ⭐ 4.9</div></div></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''"><div style="height:105px;background:linear-gradient(135deg,#2a0d0d,#600010);display:flex;align-items:center;justify-content:center;font-size:34px;position:relative">🏗️<span style="position:absolute;top:7px;right:7px;font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(57,224,117,0.2);color:var(--accent3);border:1px solid rgba(57,224,117,0.3);font-family:'JetBrains Mono',monospace">BASIC</span></div><div style="padding:13px"><div style="font-size:9px;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px">COMMISSIONING</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Plant Commissioning Procedures</div><div style="font-size:10px;color:var(--text2)">⏱ 10 jam · 📖 7 modul · ⭐ 4.5</div></div></div>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="section" id="section-quiz">
+        <div class="two-col fade-up fu1">
+          <div>
+            <div class="quiz-card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:13px">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);margin-bottom:6px">PERTANYAAN 01 / 05 — Rotating Equipment</div>
+              <div style="font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.5">Apa fungsi utama dari mechanical seal pada centrifugal pump?</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="padding:10px 14px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:12.5px;transition:all 0.15s;background:rgba(255,255,255,0.02)" onclick="selAns(this)" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">A. Mengatur tekanan discharge pompa</div>
+                <div style="padding:10px 14px;border-radius:7px;border:1px solid var(--accent);cursor:pointer;font-size:12.5px;background:rgba(0,212,255,0.08);color:var(--accent)" onclick="selAns(this)">B. Mencegah kebocoran fluida di sekitar shaft pompa</div>
+                <div style="padding:10px 14px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:12.5px;transition:all 0.15s;background:rgba(255,255,255,0.02)" onclick="selAns(this)" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">C. Mengurangi getaran pada impeller</div>
+                <div style="padding:10px 14px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:12.5px;transition:all 0.15s;background:rgba(255,255,255,0.02)" onclick="selAns(this)" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">D. Meningkatkan efisiensi aliran fluida</div>
+              </div>
+              <div style="margin-top:16px;display:flex;gap:9px"><button class="btn btn-outline">← Sebelumnya</button><button class="btn btn-primary">Selanjutnya →</button></div>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:13px"><div class="card-header"><div class="card-title">Status Ujian</div></div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text2)">Waktu Tersisa</span><span style="font-family:'JetBrains Mono',monospace;color:var(--accent2)" id="timerEl">28:43</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text2)">Dijawab</span><span style="font-family:'JetBrains Mono',monospace">3 / 5</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text2)">Nilai Sementara</span><span style="font-family:'JetBrains Mono',monospace;color:var(--accent3)">80 / 100</span></div>
+              </div>
+            </div>
+            <div class="card"><div class="card-header"><div class="card-title">Ujian Tersedia</div></div>
+              <div class="activity-item" style="padding:8px 0"><div class="act-dot" style="background:var(--accent2)"></div><div style="flex:1"><div class="act-text"><span class="act-name">P&ID Reading Final Test</span></div><div class="act-time">Deadline: 20 Mar — 25 soal</div></div><button class="btn btn-outline" style="font-size:10px;padding:4px 9px">Mulai</button></div>
+              <div class="activity-item" style="padding:8px 0"><div class="act-dot" style="background:var(--accent4)"></div><div style="flex:1"><div class="act-text"><span class="act-name">Safety Management Quiz</span></div><div class="act-time">Deadline: 22 Mar — 15 soal</div></div><button class="btn btn-outline" style="font-size:10px;padding:4px 9px">Mulai</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CERTIFICATES -->
+      <div class="section" id="section-certificates">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px" class="fade-up fu1">
+          <div style="background:linear-gradient(135deg,var(--bg2),#0d1e2e);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:center;cursor:pointer;transition:transform 0.2s" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform=''"><div style="width:48px;height:48px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,212,255,0.05));border:1px solid rgba(0,212,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🏆</div><div style="flex:1"><div style="font-size:13.5px;font-weight:600;margin-bottom:3px">Process Safety Management</div><div style="font-size:10px;color:var(--text2);font-family:'JetBrains Mono',monospace">10 Mar 2025 · CERT-2025-PSM-001</div></div><div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent3)">98</div></div>
+          <div style="background:linear-gradient(135deg,var(--bg2),#0d1e2e);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:center;cursor:pointer;transition:transform 0.2s" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform=''"><div style="width:48px;height:48px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,212,255,0.05));border:1px solid rgba(0,212,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🎓</div><div style="flex:1"><div style="font-size:13.5px;font-weight:600;margin-bottom:3px">P&ID Reading & Interpretation</div><div style="font-size:10px;color:var(--text2);font-family:'JetBrains Mono',monospace">28 Feb 2025 · CERT-2025-PID-007</div></div><div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent3)">94</div></div>
+          <div style="background:linear-gradient(135deg,var(--bg2),#0d1e2e);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:center;cursor:pointer;transition:transform 0.2s" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform=''"><div style="width:48px;height:48px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,212,255,0.05));border:1px solid rgba(0,212,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">⚙️</div><div style="flex:1"><div style="font-size:13.5px;font-weight:600;margin-bottom:3px">Rotating Equipment Level 1</div><div style="font-size:10px;color:var(--text2);font-family:'JetBrains Mono',monospace">15 Feb 2025 · CERT-2025-ROT-003</div></div><div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent3)">89</div></div>
+          <div style="background:linear-gradient(135deg,var(--bg2),#0d1e2e);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:center;cursor:pointer;transition:transform 0.2s" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform=''"><div style="width:48px;height:48px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,212,255,0.05));border:1px solid rgba(0,212,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🔒</div><div style="flex:1"><div style="font-size:13.5px;font-weight:600;margin-bottom:3px">Safety Induction & Fire Prevention</div><div style="font-size:10px;color:var(--text2);font-family:'JetBrains Mono',monospace">05 Jan 2025 · CERT-2025-SF-012</div></div><div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent3)">88</div></div>
+        </div>
+      </div>
+
+      <!-- LEADERBOARD -->
+      <div class="section" id="section-leaderboard">
+        <div class="two-col fade-up fu1">
+          <div class="card"><div class="card-header"><div class="card-title">Top Learner — Maret 2025</div><div class="card-badge live">● LIVE DB</div></div><div id="lbList"><div style="color:var(--text2);font-size:12px;padding:20px 0;text-align:center">Memuat data...</div></div></div>
+          <div>
+            <div class="card" style="margin-bottom:13px"><div class="card-header"><div class="card-title">Poin Anda</div></div>
+              <div style="text-align:center;padding:7px 0"><div style="font-family:'Bebas Neue',sans-serif;font-size:50px;color:var(--accent);letter-spacing:2px">847</div><div style="font-size:10.5px;color:var(--text2);margin-bottom:13px">XP BULAN INI</div><div class="progress-bar"><div class="progress-fill" style="width:68%;background:var(--accent)"></div></div><div style="font-size:10px;color:var(--text2);margin-top:4px;font-family:'JetBrains Mono',monospace">393 XP lagi untuk Rank #3</div></div>
+            </div>
+            <div class="card"><div class="card-header"><div class="card-title">Cara Dapat XP</div></div>
+              <div class="activity-item" style="padding:6px 0"><div class="act-dot" style="background:var(--accent)"></div><div style="flex:1;font-size:11.5px">Selesaikan modul</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent4)">+50 XP</div></div>
+              <div class="activity-item" style="padding:6px 0"><div class="act-dot" style="background:var(--accent3)"></div><div style="flex:1;font-size:11.5px">Lulus ujian ≥90</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent4)">+100 XP</div></div>
+              <div class="activity-item" style="padding:6px 0"><div class="act-dot" style="background:var(--accent2)"></div><div style="flex:1;font-size:11.5px">Dapat sertifikat</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent4)">+200 XP</div></div>
+              <div class="activity-item" style="padding:6px 0"><div class="act-dot" style="background:var(--accent4)"></div><div style="flex:1;font-size:11.5px">Login harian</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent4)">+10 XP</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT -->
+      <div class="section" id="section-report">
+        <div class="stats-grid fade-up fu1">
+          <div class="stat-card c1"><div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div class="stat-value" id="rTotal2">—</div><div class="stat-label">Peserta Terdaftar</div><div class="stat-delta">▲ Supabase DB</div></div>
+          <div class="stat-card c2"><div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6b2b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stat-value">2,847</div><div class="stat-label">Jam Belajar</div><div class="stat-delta">▲ +340 jam</div></div>
+          <div class="stat-card c3"><div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#39e075" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-value">89%</div><div class="stat-label">Tingkat Selesai</div><div class="stat-delta">▲ +4%</div></div>
+          <div class="stat-card c4"><div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f5c842" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="stat-value">76%</div><div class="stat-label">Rata-rata Nilai</div><div class="stat-delta">▲ +2%</div></div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="section" id="section-profile">
+        <div class="profile-grid fade-up fu1">
+          <div class="prof-av-card">
+            <div class="prof-av-big" id="pAvBig"></div>
+            <div class="prof-fullname" id="pFullname">—</div>
+            <div class="prof-role-tag" id="pRoleTag"></div>
+            <div style="font-size:11px;color:var(--text2)" id="pEmail">—</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px" id="pDept">—</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px" id="pSite">—</div>
+            <div class="prof-stats">
+              <div class="p-stat"><div class="p-stat-val">12</div><div class="p-stat-lbl">Kursus</div></div>
+              <div class="p-stat"><div class="p-stat-val">847</div><div class="p-stat-lbl">XP</div></div>
+              <div class="p-stat"><div class="p-stat-val">7</div><div class="p-stat-lbl">Sertif.</div></div>
+              <div class="p-stat"><div class="p-stat-val">#4</div><div class="p-stat-lbl">Rank</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Edit Profil</div><span class="save-ind" id="saveInd">✓ Tersimpan ke Supabase</span></div>
+            <div class="fsec-title">Informasi Pribadi</div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Nama Depan</label><input class="form-input" id="eFirst"></div>
+              <div class="form-group"><label class="form-label">Nama Belakang</label><input class="form-input" id="eLast"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Email (tidak bisa diubah)</label><input class="form-input" id="eEmail" readonly style="opacity:0.55;cursor:not-allowed"></div>
+            <div class="form-group"><label class="form-label">Nomor HP / WhatsApp</label><input class="form-input" id="ePhone" placeholder="08xx-xxxx-xxxx"></div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Departemen</label><select class="form-select" id="eDept"><option>Process Engineering</option><option>Mechanical</option><option>Instrumentation</option><option>Electrical</option><option>HSE Department</option><option>Commissioning</option><option>Environmental</option></select></div>
+              <div class="form-group"><label class="form-label">Lokasi / Site</label><select class="form-select" id="eSite"><option>Kalimantan Timur</option><option>Kalimantan Selatan</option><option>Sumatera</option><option>Jawa</option><option>Papua</option></select></div>
+            </div>
+            <div class="form-group"><label class="form-label">Jabatan / Posisi</label><input class="form-input" id="ePos" placeholder="Plant Engineer"></div>
+            <div class="fsec-title">Ubah Password</div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Password Lama</label><input class="form-input" id="eOldP" type="password" placeholder="••••••"></div>
+              <div class="form-group"><label class="form-label">Password Baru</label><input class="form-input" id="eNewP" type="password" placeholder="Min. 6 karakter"></div>
+            </div>
+            <div style="display:flex;gap:9px">
+              <button class="btn btn-primary" onclick="saveProfile()">Simpan ke Supabase</button>
+              <button class="btn btn-outline" onclick="resetProfForm()">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN -->
+      <div class="section" id="section-admin-users">
+        <div class="card fade-up fu1">
+          <div class="card-header">
+            <div class="card-title">Kelola Peserta <span style="font-size:10px;color:var(--accent3);font-family:'JetBrains Mono',monospace">● Supabase</span></div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="card-badge" id="auBadge">0 Pengguna</div>
+              <button class="btn btn-primary" style="font-size:11px;padding:5px 13px" onclick="openAddModal()">+ Tambah</button>
+            </div>
+          </div>
+          <div id="auList"><div style="color:var(--text2);padding:20px 0;font-size:13px;text-align:center">Memuat data...</div></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app-wrap -->
+
+<!-- MODAL ADD USER -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal-box">
+    <div class="modal-title">Tambah Pengguna Baru</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nama Depan</label><input class="form-input" id="mF"></div>
+      <div class="form-group"><label class="form-label">Nama Belakang</label><input class="form-input" id="mL"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="mE" type="email"><div class="err-msg" id="mEErr">Email sudah terdaftar</div></div>
+    <div class="form-group"><label class="form-label">Departemen</label><select class="form-select" id="mD"><option>Process Engineering</option><option>Mechanical</option><option>Instrumentation</option><option>Electrical</option><option>HSE Department</option><option>Commissioning</option><option>Environmental</option></select></div>
+    <div class="form-group"><label class="form-label">Role</label><select class="form-select" id="mR"><option value="peserta">Peserta</option><option value="admin">Admin</option></select></div>
+    <div class="form-group"><label class="form-label">Password Awal</label><input class="form-input" id="mP" type="password" placeholder="Min. 6 karakter"></div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeModal('addModal')">Batal</button>
+      <button class="btn btn-primary" onclick="adminAdd()">Tambah Pengguna</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DELETE -->
+<div class="modal-overlay" id="delModal">
+  <div class="modal-box">
+    <div class="modal-title">Konfirmasi Hapus</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.6">Hapus pengguna <strong id="delName" style="color:var(--text)"></strong>? Data akan dihapus permanen dari Supabase.</p>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeModal('delModal')">Batal</button>
+      <button class="btn btn-danger" onclick="confirmDel()">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// SUPABASE CONFIG
+// ============================================================
+const SUPABASE_URL = 'https://fhlrovvydogyoqnnfcgw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_UagLOMyX-xfA7ltjkxBzfw_zcfpH9kK';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const COLORS = ['#00d4ff','#ff6b2b','#39e075','#f5c842','#aa88ff','#ff88bb','#88ffcc','#ffaa44'];
+const SS = 'tplc_session';
+let CU = null, delTarget = null;
+
+// Session helpers (still use localStorage for session token only)
+const getSess = () => { try { return JSON.parse(localStorage.getItem(SS)); } catch { return null; } };
+const setSess = u => localStorage.setItem(SS, JSON.stringify(u));
+const clrSess = () => localStorage.removeItem(SS);
+
+// ============================================================
+// DB HELPERS
+// ============================================================
+async function dbGetAllUsers() {
+  const { data, error } = await sb.from('users').select('*').order('created_at', { ascending: true });
+  if (error) { console.error('dbGetAllUsers:', error); return []; }
+  return data || [];
+}
+
+async function dbGetUserByEmail(email) {
+  try {
+    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
+    const query = sb.from('users').select('*').eq('email', email).single();
+    const { data, error } = await Promise.race([query, timeout.then(() => ({ data: null, error: 'timeout' }))]);
+    if (error) return null;
+    return data;
+  } catch(e) {
+    return null;
+  }
+}
+
+async function dbCreateUser(user) {
+  const { data, error } = await sb.from('users').insert([user]).select().single();
+  if (error) { console.error('dbCreateUser:', error); return null; }
+  return data;
+}
+
+async function dbUpdateUser(id, updates) {
+  const { data, error } = await sb.from('users').update(updates).eq('id', id).select().single();
+  if (error) { console.error('dbUpdateUser:', error); return null; }
+  return data;
+}
+
+async function dbDeleteUser(id) {
+  const { error } = await sb.from('users').delete().eq('id', id);
+  return !error;
+}
+
+async function dbGetCount() {
+  const { count, error } = await sb.from('users').select('*', { count: 'exact', head: true });
+  if (error) return 0;
+  return count || 0;
+}
+
+// Test connection
+async function testConnection() {
+  const badge = document.getElementById('dbBadge');
+  try {
+    const { error } = await sb.from('users').select('id').limit(1);
+    if (badge) {
+      badge.className = error ? 'db-badge offline' : 'db-badge connected';
+      badge.innerHTML = error ? '● OFFLINE' : '● SUPABASE';
+    }
+    return !error;
+  } catch(e) {
+    if (badge) { badge.className = 'db-badge offline'; badge.innerHTML = '● OFFLINE'; }
+    return false;
+  }
+}
+
+// ============================================================
+// AUTH FUNCTIONS
+// ============================================================
+function switchTab(t) {
+  document.getElementById('tabLogin').classList.toggle('active', t === 'login');
+  document.getElementById('tabReg').classList.toggle('active', t === 'reg');
+  document.getElementById('loginForm').style.display = t === 'login' ? 'block' : 'none';
+  document.getElementById('regForm').style.display = t === 'reg' ? 'block' : 'none';
+}
+
+function fillDemo(e, p) {
+  document.getElementById('lEmail').value = e;
+  document.getElementById('lPass').value = p;
+}
+
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.classList.toggle('loading', loading);
+}
+
+async function doLogin() {
+  const email = document.getElementById('lEmail').value.trim().toLowerCase();
+  const pass = document.getElementById('lPass').value;
+  if (!email || !pass) { toast('Isi email dan password', 'error'); return; }
+
+  setLoading('btnLogin', true);
+  let user = null;
+  try {
+    user = await dbGetUserByEmail(email);
+  } catch(e) {
+    toast('Koneksi database gagal. Coba lagi.', 'error');
+    setLoading('btnLogin', false);
+    return;
+  }
+  setLoading('btnLogin', false);
+
+  if (!user || user.password !== pass) {
+    const errEl = document.getElementById('lErr');
+    errEl.textContent = !user ? 'Tabel database belum dibuat. Jalankan SQL di Supabase dulu.' : 'Email atau password salah';
+    errEl.classList.add('show');
+    setTimeout(() => errEl.classList.remove('show'), 5000);
+    return;
+  }
+  setSess({ id: user.id, email: user.email });
+  launchApp(user);
+}
+
+async function doRegister() {
+  const first = document.getElementById('rFirst').value.trim();
+  const last  = document.getElementById('rLast').value.trim();
+  const email = document.getElementById('rEmail').value.trim().toLowerCase();
+  const dept  = document.getElementById('rDept').value;
+  const site  = document.getElementById('rSite').value;
+  const p1    = document.getElementById('rPass').value;
+  const p2    = document.getElementById('rPass2').value;
+
+  let ok = true;
+  if (!email || !email.includes('@')) { document.getElementById('rEmailErr').textContent = 'Email tidak valid'; document.getElementById('rEmailErr').classList.add('show'); ok = false; }
+  if (p1.length < 6) { document.getElementById('rPassErr').classList.add('show'); ok = false; } else document.getElementById('rPassErr').classList.remove('show');
+  if (p1 !== p2) { document.getElementById('rPass2Err').classList.add('show'); ok = false; } else document.getElementById('rPass2Err').classList.remove('show');
+  if (!first || !last || !dept || !site) { toast('Harap isi semua field', 'error'); ok = false; }
+  if (!ok) return;
+
+  setLoading('btnRegister', true);
+
+  // Check email exists
+  const existing = await dbGetUserByEmail(email);
+  if (existing) {
+    document.getElementById('rEmailErr').textContent = 'Email sudah terdaftar';
+    document.getElementById('rEmailErr').classList.add('show');
+    setLoading('btnRegister', false);
+    return;
+  }
+
+  const count = await dbGetCount();
+  const color = COLORS[count % COLORS.length];
+  const newUser = { email, password: p1, first_name: first, last_name: last, dept, site, role: 'peserta', phone: '', position: '', color, xp: 0 };
+
+  const created = await dbCreateUser(newUser);
+  setLoading('btnRegister', false);
+
+  if (!created) { toast('Gagal membuat akun, coba lagi', 'error'); return; }
+
+  setSess({ id: created.id, email: created.email });
+  toast('Akun berhasil dibuat! Selamat datang 🎉', 'success');
+  setTimeout(() => launchApp(created), 700);
+}
+
+async function doLogout() {
+  clrSess();
+  document.getElementById('appWrap').classList.remove('visible');
+  document.getElementById('authWrap').classList.remove('hidden');
+  toast('Anda berhasil keluar', 'info');
+}
+
+// ============================================================
+// APP
+// ============================================================
+function getInit(u) {
+  const f = u.first_name || u.firstName || '';
+  const l = u.last_name  || u.lastName  || '';
+  return (f[0] + l[0]).toUpperCase();
+}
+
+function getFullName(u) {
+  return (u.first_name || u.firstName || '') + ' ' + (u.last_name || u.lastName || '');
+}
+
+async function launchApp(user) {
+  CU = user;
+  document.getElementById('authWrap').classList.add('hidden');
+  document.getElementById('appWrap').classList.add('visible');
+  renderSidebar(user);
+
+  if (user.role === 'admin') {
+    document.querySelectorAll('.admin-only').forEach(el => el.classList.add('show'));
+  }
+
+  await testConnection();
+  await refreshCounters();
+  await renderLeaderboard();
+  populateProfile(user);
+}
+
+function renderSidebar(u) {
+  const av = document.getElementById('sbAv');
+  av.textContent = getInit(u); av.style.background = u.color; av.style.color = '#0a0e14';
+  document.getElementById('sbName').textContent = getFullName(u);
+  document.getElementById('sbDept').textContent = u.dept || '—';
+  const rp = document.getElementById('sbRP');
+  rp.textContent = u.role === 'admin' ? 'ADMIN' : 'PESERTA';
+  rp.className = 'role-pill ' + (u.role === 'admin' ? 'rp-admin' : 'rp-peserta');
+  document.getElementById('heroName').innerHTML = `${u.first_name || u.firstName} <span>${u.last_name || u.lastName}</span>`;
+}
+
+async function refreshCounters() {
+  const n = await dbGetCount();
+  ['ub', 'rTotal', 'auBadge', 'dnutTotal', 'dnutAktif'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = id === 'auBadge' ? n + ' Pengguna' : n;
+  });
+}
+
+async function renderLeaderboard() {
+  const users = await dbGetAllUsers();
+  const xps = [1240,1115,987,847,812,778,634,598,512,487];
+  const html = users.slice(0, 8).map((u, i) => {
+    const rc = i < 3 ? ' top' + (i+1) : '';
+    const me = CU && u.id === CU.id;
+    const xp = xps[i] || (300 - i * 20);
+    return `<div class="lb-item">
+      <div class="lb-rank${rc}">${i+1}</div>
+      <div class="lb-avatar" style="background:${u.color};color:#0a0e14">${getInit(u)}</div>
+      <div><div class="lb-name">${getFullName(u)}${me ? ' <span style="color:var(--accent);font-size:9.5px">(Anda)</span>' : ''}</div><div class="lb-dept">${u.dept || ''}</div></div>
+      <div class="lb-pts" style="${me ? 'color:var(--accent)' : ''}">${xp.toLocaleString()} XP</div>
+    </div>`;
+  }).join('');
+  const el = document.getElementById('lbList');
+  if (el) el.innerHTML = html || '<div style="color:var(--text2);font-size:12.5px;padding:14px 0">Belum ada data</div>';
+}
+
+async function renderAdminList() {
+  if (!CU || CU.role !== 'admin') return;
+  await refreshCounters();
+  const users = await dbGetAllUsers();
+  const html = users.map(u => {
+    const me = u.id === CU.id;
+    return `<div class="ul-item">
+      <div class="ul-av" style="background:${u.color};color:#0a0e14">${getInit(u)}</div>
+      <div class="ul-info">
+        <div class="ul-name">${getFullName(u)}${me ? ' <span style="color:var(--accent);font-size:9.5px">(Anda)</span>' : ''}</div>
+        <div class="ul-detail">${u.email} · ${u.dept || '—'} · ${u.site || '—'} · ${u.position || '—'}</div>
+      </div>
+      <div style="margin:0 10px"><span class="spill ${u.role === 'admin' ? 'prog' : 'done'}" style="font-size:9.5px">${u.role === 'admin' ? 'Admin' : 'Peserta'}</span></div>
+      <div class="ul-actions">
+        ${!me && u.role === 'peserta' ? `<button class="promo" onclick="promoteUser('${u.id}')">→ Admin</button>` : ''}
+        ${!me && u.role === 'admin' ? `<button onclick="demoteUser('${u.id}')">→ Peserta</button>` : ''}
+        ${!me ? `<button class="del" onclick="openDelModal('${u.id}','${getFullName(u)}')">Hapus</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+  const el = document.getElementById('auList');
+  if (el) el.innerHTML = html || '<div style="color:var(--text2);padding:20px 0;font-size:13px">Belum ada pengguna</div>';
+}
+
+function openAddModal() {
+  ['mF','mL','mE','mP'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('mEErr').classList.remove('show');
+  document.getElementById('addModal').classList.add('open');
+}
+
+async function adminAdd() {
+  const f = document.getElementById('mF').value.trim();
+  const l = document.getElementById('mL').value.trim();
+  const e = document.getElementById('mE').value.trim().toLowerCase();
+  const d = document.getElementById('mD').value;
+  const r = document.getElementById('mR').value;
+  const p = document.getElementById('mP').value;
+  if (!f || !l || !e || !p) { toast('Harap isi semua field', 'error'); return; }
+
+  const existing = await dbGetUserByEmail(e);
+  if (existing) { document.getElementById('mEErr').classList.add('show'); return; }
+
+  const count = await dbGetCount();
+  const color = COLORS[count % COLORS.length];
+  const created = await dbCreateUser({ email: e, password: p, first_name: f, last_name: l, dept: d, site: 'Kalimantan Timur', role: r, phone: '', position: '', color, xp: 0 });
+
+  if (!created) { toast('Gagal menambah pengguna', 'error'); return; }
+  closeModal('addModal');
+  await renderAdminList();
+  await renderLeaderboard();
+  toast('Pengguna berhasil ditambahkan', 'success');
+}
+
+function openDelModal(id, name) {
+  delTarget = id;
+  document.getElementById('delName').textContent = name;
+  document.getElementById('delModal').classList.add('open');
+}
+
+async function confirmDel() {
+  if (!delTarget) return;
+  const ok = await dbDeleteUser(delTarget);
+  delTarget = null;
+  closeModal('delModal');
+  if (ok) {
+    await renderAdminList();
+    await renderLeaderboard();
+    toast('Pengguna berhasil dihapus', 'info');
+  } else {
+    toast('Gagal menghapus pengguna', 'error');
+  }
+}
+
+async function promoteUser(id) {
+  const updated = await dbUpdateUser(id, { role: 'admin' });
+  if (updated) { await renderAdminList(); toast(getFullName(updated) + ' dijadikan Admin', 'success'); }
+}
+
+async function demoteUser(id) {
+  const updated = await dbUpdateUser(id, { role: 'peserta' });
+  if (updated) { await renderAdminList(); toast(getFullName(updated) + ' dijadikan Peserta', 'info'); }
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+
+// ============================================================
+// PROFILE
+// ============================================================
+function populateProfile(u) {
+  document.getElementById('eFirst').value = u.first_name || u.firstName || '';
+  document.getElementById('eLast').value  = u.last_name  || u.lastName  || '';
+  document.getElementById('eEmail').value = u.email || '';
+  document.getElementById('ePhone').value = u.phone || '';
+  document.getElementById('ePos').value   = u.position || '';
+  ['eDept','eSite'].forEach(id => {
+    const s = document.getElementById(id);
+    const key = id === 'eDept' ? 'dept' : 'site';
+    for (let o of s.options) if (o.value === u[key]) o.selected = true;
+  });
+  document.getElementById('pAvBig').textContent = getInit(u);
+  document.getElementById('pAvBig').style.background = u.color;
+  document.getElementById('pAvBig').style.color = '#0a0e14';
+  document.getElementById('pFullname').textContent = getFullName(u);
+  document.getElementById('pEmail').textContent = u.email;
+  document.getElementById('pDept').textContent  = '📍 ' + u.dept;
+  document.getElementById('pSite').textContent  = '🏭 ' + u.site;
+  const t = document.getElementById('pRoleTag');
+  t.textContent = u.role === 'admin' ? '👑 Admin' : '👤 Peserta';
+  t.className = 'prof-role-tag ' + (u.role === 'admin' ? 'rp-admin' : 'rp-peserta');
+  t.style.cssText = u.role === 'admin'
+    ? 'background:rgba(170,136,255,0.1);border:1px solid rgba(170,136,255,0.3);color:var(--admin)'
+    : 'background:rgba(57,224,117,0.1);border:1px solid rgba(57,224,117,0.3);color:var(--accent3)';
+}
+
+async function saveProfile() {
+  const f  = document.getElementById('eFirst').value.trim();
+  const l  = document.getElementById('eLast').value.trim();
+  const op = document.getElementById('eOldP').value;
+  const np = document.getElementById('eNewP').value;
+  if (!f || !l) { toast('Nama tidak boleh kosong', 'error'); return; }
+  if (np) {
+    if (op !== CU.password) { toast('Password lama salah', 'error'); return; }
+    if (np.length < 6) { toast('Password baru min. 6 karakter', 'error'); return; }
+  }
+  const updates = {
+    first_name: f, last_name: l,
+    phone: document.getElementById('ePhone').value,
+    dept:  document.getElementById('eDept').value,
+    site:  document.getElementById('eSite').value,
+    position: document.getElementById('ePos').value,
+  };
+  if (np) updates.password = np;
+
+  const updated = await dbUpdateUser(CU.id, updates);
+  if (!updated) { toast('Gagal menyimpan profil', 'error'); return; }
+
+  CU = updated;
+  setSess({ id: CU.id, email: CU.email });
+  renderSidebar(CU);
+  populateProfile(CU);
+  document.getElementById('eOldP').value = '';
+  document.getElementById('eNewP').value = '';
+  const ind = document.getElementById('saveInd');
+  ind.classList.add('show');
+  setTimeout(() => ind.classList.remove('show'), 3000);
+  toast('Profil berhasil disimpan ✓', 'success');
+}
+
+function resetProfForm() { populateProfile(CU); }
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function go(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const s = document.getElementById('section-' + id);
+  if (s) s.classList.add('active');
+  if (el) el.classList.add('active');
+  const t = {
+    'dashboard':'Dashboard <span>Overview</span>',
+    'my-learning':'My <span>Learning</span>',
+    'schedule':'Jadwal <span>Training</span>',
+    'courses':'Kursus <span>& Modul</span>',
+    'quiz':'Kuis <span>& Ujian</span>',
+    'certificates':'<span>Sertifikat</span>',
+    'leaderboard':'<span>Leaderboard</span>',
+    'report':'Laporan <span>Pembelajaran</span>',
+    'admin-users':'Kelola <span>Peserta</span>',
+    'profile':'Profil <span>Saya</span>'
+  };
+  document.getElementById('ttl').innerHTML = t[id] || id;
+  if (id === 'admin-users') renderAdminList();
+  if (id === 'leaderboard') renderLeaderboard();
+  if (id === 'profile' && CU) populateProfile(CU);
+}
+
+function selAns(el) {
+  el.closest('.q-options').querySelectorAll('.q-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// TIMER
+let tsec = 28*60+43;
+setInterval(() => {
+  tsec--; if (tsec <= 0) tsec = 0;
+  const el = document.getElementById('timerEl');
+  if (el) {
+    const m = Math.floor(tsec/60).toString().padStart(2,'0');
+    const s = (tsec%60).toString().padStart(2,'0');
+    el.textContent = m + ':' + s;
+    if (tsec < 300) el.style.color = 'var(--accent2)';
+  }
+}, 1000);
+
+// TOAST
+function toast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast ' + type;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ============================================================
+// INIT — Check session & auto-login
+// ============================================================
+async function init() {
+  const loading = document.getElementById('loadingScreen');
+  const authWrap = document.getElementById('authWrap');
+
+  // Safety timeout — show auth after 4 seconds no matter what
+  const safetyTimer = setTimeout(() => {
+    loading.classList.add('hidden');
+    authWrap.style.display = 'flex';
+  }, 2000);
+
+  try {
+    const sess = getSess();
+    if (sess) {
+      const user = await dbGetUserByEmail(sess.email);
+      clearTimeout(safetyTimer);
+      if (user) {
+        loading.classList.add('hidden');
+        launchApp(user);
+        return;
+      } else {
+        clrSess();
+      }
+    }
+  } catch(e) {
+    console.warn('Init error:', e);
+  }
+
+  clearTimeout(safetyTimer);
+  loading.classList.add('hidden');
+  authWrap.style.display = 'flex';
+}
+
+// Also fallback: if DOM loads and loading still visible after 2s, force show auth
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const loading = document.getElementById('loadingScreen');
+    const auth = document.getElementById('authWrap');
+    const app = document.getElementById('appWrap');
+    if (loading && !loading.classList.contains('hidden')) {
+      loading.classList.add('hidden');
+      if (app && !app.classList.contains('visible')) {
+        auth.style.display = 'flex';
+      }
+    }
+  }, 2000);
+});
+
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>
